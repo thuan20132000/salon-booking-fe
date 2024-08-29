@@ -46,8 +46,8 @@ const menuGroups = [
       },
       {
         icon: <UserOutlined />,
-        label: "Staff",
-        route: "/staff",
+        label: "Employees",
+        route: "/employees",
       },
       {
         icon: <OrderedListOutlined />,

@@ -9,7 +9,7 @@ type SizeType = ConfigProviderProps['componentSize'];
 
 type Props = {}
 
-const AddService = (props: Props) => {
+const AddEmployee = (props: Props) => {
   const [open, setOpen] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('right');
   const [service, setService] = useState<NailServiceType>();
@@ -50,9 +50,9 @@ const AddService = (props: Props) => {
 
 
   return (
-    <div style={{ marginBottom: 20 ,alignSelf:'flex-end'}}>
+    <div style={{ marginBottom: 20, alignSelf: 'flex-end' }}>
       <Button onClick={showDrawer} icon={<PlusOutlined />}>
-        New Service
+        New Employee
       </Button>
       <Drawer
         title="Create a new account"
@@ -177,4 +177,4 @@ const AddService = (props: Props) => {
   )
 }
 
-export default AddService
+export default AddEmployee

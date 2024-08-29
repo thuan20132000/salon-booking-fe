@@ -6,6 +6,8 @@ export type UserType = {
   email_verified_at: string;
   created_at: string;
   updated_at: string;
+  username?: string;
+  phone_number?: string;
 };
 
 export type UserRolesType = {
@@ -23,9 +25,11 @@ export type UserLevelType = {
   updated_at: string;
 };
 
-export type StaffType = {
-  first_name: string;
-  last_name: string;
+export type EmployeeType = {
+  id?: number;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
   phone_number: string;
   email: string;
   role: UserRolesType;
@@ -39,4 +43,8 @@ export type StaffType = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type CustomerType = UserType & {
+
+}
 

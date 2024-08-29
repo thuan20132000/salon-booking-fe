@@ -1,9 +1,9 @@
+import { appointmentAPI } from '@/apis/appointmentAPI';
 import { AppointmentType } from '@/types/appointment';
-import dayjs, { Dayjs } from 'dayjs';
 import { create } from 'zustand';
 
 
-export type AppointmentStoreType = {
+export type AppointmentStore = {
   appointments: AppointmentType[];
   addAppointment: (appointment: AppointmentType) => void;
   removeAppointment: (id: number) => void;
@@ -11,9 +11,10 @@ export type AppointmentStoreType = {
   setShowAddAppointment: (isShowAddAppointment: boolean) => void;
   handleShowAddAppointment: (datetime: Date) => void;
   appointment?: AppointmentType | null;
+  getAppointments: () => Promise<void>;
 };
 
-const useAppointmentStore = create<AppointmentStoreType>((set) => ({
+const useAppointmentStore = create<AppointmentStore>((set) => ({
   appointments: [],
   appointment: null,
   addAppointment: (appointment) =>
@@ -30,7 +31,11 @@ const useAppointmentStore = create<AppointmentStoreType>((set) => ({
     console.log('====================================');
     console.log('handleShowAddAppointment:: ', datetime);
     console.log('====================================');
-    set((state) => ({ appointment: { id: 1, datetime: datetime } , isShowAddAppointment: true }));
+    set((state) => ({ appointment: { id: 1, datetime: datetime }, isShowAddAppointment: true }));
+  },
+  getAppointments: async () => {
+    const data = await appointmentAPI.getAppointments();
+    set({ appointments: data });
   }
 
 }));

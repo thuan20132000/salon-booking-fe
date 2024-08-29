@@ -1,16 +1,17 @@
 'use client';
 
-import Breadcrumb from "../Breadcrumbs/Breadcrumb";
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import timeGridPlugin from '@fullcalendar/timegrid'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
-import AddAppointment from "./AddAppointment";
-import useAppointmentStore, { AppointmentStoreType } from "@/store/useAppointmentStore";
+import useAppointmentStore, { AppointmentStore } from "@/store/useAppointmentStore";
+import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb';
+import AddAppointment from '@/app/appointments/components/AddAppointment';
+import { Space } from 'antd';
 
 const Calendar = () => {
-  const { isShowAddAppointment, setShowAddAppointment, handleShowAddAppointment } = useAppointmentStore((state: AppointmentStoreType) => state);
+  const { isShowAddAppointment, setShowAddAppointment, handleShowAddAppointment } = useAppointmentStore((state: AppointmentStore) => state);
   const events = [
     {
       title: 'Meeting',
@@ -51,7 +52,10 @@ const Calendar = () => {
 
   return (
     <div className="mx-auto max-w-7xl">
-      <Breadcrumb pageName="Calendar" />
+      <Space className='flex justify-end'  >
+        <AddAppointment />
+      </Space>
+
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, resourceTimelinePlugin]}
         // initialView='dayGridMonth'

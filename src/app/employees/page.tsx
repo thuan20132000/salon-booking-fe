@@ -6,6 +6,7 @@ import TableTwo from "@/components/Tables/TableTwo";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import AddStaff from "@/components/Staff/AddStaff";
+import EmployeeListTable from "./components/EmployeeListTable";
 
 export const metadata: Metadata = {
   title: "Next.js Tables | TailAdmin - Next.js Dashboard Template",
@@ -13,20 +14,13 @@ export const metadata: Metadata = {
     "This is Next.js Tables page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
 };
 
-const StaffPage = () => {
+const EmployeePage = () => {
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Staff" />
-      <div>
-        <AddStaff />
-      </div>
-      <div className="flex flex-col gap-10">
-        {/* <TableOne />
-        <TableTwo /> */}
-        <TableThree />
-      </div>
+      <Breadcrumb pageName="Employee" />
+      <EmployeeListTable />
     </DefaultLayout>
   );
 };
 
-export default StaffPage;
+export default EmployeePage;

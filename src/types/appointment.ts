@@ -1,4 +1,5 @@
 import { NailServiceType } from "./service";
+import { CustomerType, EmployeeType } from "./user";
 
 export type AppointmentType = {
   id?: number;
@@ -14,4 +15,8 @@ export type AppointmentType = {
   note?: string;
   created_at?: string;
   updated_at?: string;
+  employee?: EmployeeType;
+  customer?: CustomerType;
+  start_at?: Date;
+  end_at?: Date;
 };

@@ -5,7 +5,7 @@ import { Button, Cascader, Col, DatePicker, Drawer, DrawerProps, Form, Input, In
 import React, { useState } from 'react'
 const { Option } = Select;
 import type { ConfigProviderProps, SelectProps } from 'antd';
-import { StaffType } from '@/types/user';
+import { EmployeeType } from '@/types/user';
 type SizeType = ConfigProviderProps['componentSize'];
 
 type Props = {}
@@ -13,7 +13,7 @@ type Props = {}
 const AddStaff = (props: Props) => {
   const [open, setOpen] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('right');
-  const [staff, setStaff] = useState<StaffType | null>(null);
+  const [staff, setStaff] = useState<EmployeeType | null>(null);
   const [size, setSize] = useState<SizeType>('middle');
 
   const showDrawer = () => {

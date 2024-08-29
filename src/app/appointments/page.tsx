@@ -5,7 +5,7 @@ import TableTwo from "@/components/Tables/TableTwo";
 
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import AddAppointment from "@/components/Calender/AddAppointment";
+import AppointmentListTable from "./components/AppointmentListTable";
 
 export const metadata: Metadata = {
   title: "Next.js Tables | TailAdmin - Next.js Dashboard Template",
@@ -17,14 +17,7 @@ const AppointmentPage = () => {
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Appointments" />
-      <div>
-        <AddAppointment/>
-      </div>
-      <div className="flex flex-col gap-10">
-        {/* <TableOne />
-        <TableTwo /> */}
-        <TableThree />
-      </div>
+      <AppointmentListTable />
     </DefaultLayout>
   );
 };
