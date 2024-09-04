@@ -9,9 +9,11 @@ export type NailServiceType = {
   created_at?: string;
   updated_at?: string;
   category?: NailServiceCategoryType;
+  is_selected?: boolean;
 };
 
 export type NailServiceCategoryType = {
+  id?: number;
   name: string;
   description?: string;
   is_online_booking?: boolean;

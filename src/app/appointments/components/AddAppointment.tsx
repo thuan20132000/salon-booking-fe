@@ -9,6 +9,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import useAppointmentStore, { AppointmentStore } from '@/store/useAppointmentStore';
 import AddAppointmentService from './AddAppointmentService';
 import AddAppointmentDetailTab from './AddAppointmentDetailTab';
+import { ServiceStore, useServiceStore } from '@/store/useServiceStore';
 
 type SizeType = ConfigProviderProps['componentSize'];
 
@@ -20,30 +21,13 @@ const _refPanel = React.createRef<HTMLDivElement>();
 
 const AddAppointment = (props: Props) => {
   const { isShowAddAppointment, setShowAddAppointment, appointment } = useAppointmentStore((state: AppointmentStore) => state);
+  const { getServices, getServiceCategories } = useServiceStore((state: ServiceStore) => state);
   // const [open, setOpen] = useState(false);
-  const [placement, setPlacement] = useState<DrawerProps['placement']>('right');
-  const [service, setService] = useState<NailServiceType>();
-  const [size, setSize] = useState<SizeType>('middle');
-  const [appointmentTime, setAppointmentTime] = useState<Dayjs | null>(null);
-  const [appointmentDuration, setAppointmentDuration] = useState<number>(30);
-  const [appointmentPrice, setAppointmentPrice] = useState<number>(100);
-  const [appointmentDescription, setAppointmentDescription] = useState<string>('');
-  const [appontmentServices, setAppointmentServices] = useState<NailServiceType[]>([]);
 
   const showDrawer = () => {
     setShowAddAppointment(true);
   };
 
-  // Handle date change
-  const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-    setAppointmentTime(dayjs(date));
-  };
-
-  const onAppointmentTimeChange = (value: Dayjs) => {
-    console.log('Selected Time: ', value);
-    setAppointmentTime(value);
-  }
 
   const onClose = () => {
     setShowAddAppointment(false);
@@ -51,57 +35,15 @@ const AddAppointment = (props: Props) => {
 
   const onSubmit = () => {
     console.log('====================================');
-    console.log('appointmentTime:: ', appointmentTime);
-    console.log('appointmentDuration:: ', appointmentDuration);
-    console.log('appointmentPrice:: ', appointmentPrice);
-    console.log('appointmentDescription:: ', appointmentDescription);
+    console.log('onSubmit appointment:: ', appointment);
     console.log('====================================');
   }
 
-  const getDurationOptions = () => {
-    const options: SelectProps['options'] = [];
-    for (let i = 30; i <= 300; i += 30) {
-      // format duration in hours if it is more than 60 minutes
-      const hours = Math.floor(i / 60);
-      const mins = i % 60;
-
-      const hour_string = hours > 0 ? `${hours}` : '0';
-      const min_string = mins > 0 ? `${mins}` : '00';
-
-      const duration_formatted = `${hour_string}:${min_string}`;
-
-      options.push({ value: i, label: duration_formatted });
-    }
-    return options;
-  }
-
-  const handleChange = (value: string | string[]) => {
-    console.log(`Selected: ${value}`);
-  };
-
-  const onChangeDuration = (value: number) => {
-    console.log('====================================');
-    console.log('value:: ', value);
-    console.log('====================================');
-    setAppointmentDuration(value);
-  }
-
-  const onChangePrice = (value: number) => {
-    console.log('====================================');
-    console.log('value:: ', value);
-    console.log('====================================');
-    setAppointmentPrice(value);
-  }
 
   useEffect(() => {
-    console.log('====================================');
-    console.log('appointment:: ', dayjs(appointment?.datetime));
-    console.log('====================================');
 
-    setAppointmentTime(dayjs(appointment?.datetime));
-    form.setFieldsValue({
-      appointment_datetime: dayjs(appointment?.datetime)
-    });
+    getServices();
+    getServiceCategories();
   }, [appointment?.datetime])
 
   const TABS = [
@@ -166,92 +108,6 @@ const AddAppointment = (props: Props) => {
             };
           })}
         />
-        {/* <Form layout="vertical" hideRequiredMark form={form}>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="appointment_datetime"
-                label="Appointment Datetime"
-                rules={[{ required: true, message: 'Please select appointment time' }]}
-              >
-                <DatePicker
-                  defaultValue={appointmentTime}
-                  showHour
-                  showMinute
-                  value={appointmentTime}
-                  // locale={buddhistLocale}
-                  onChange={onChange}
-                  showSecond={false}
-                  needConfirm={false}
-                  // onChange={onAppointmentTimeChange}    
-                  showTime={{ format: 'HH:mm' }}
-                  format="YYYY-MM-DD HH:mm"
-
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="price"
-                label="Price"
-                rules={[{ required: true, message: 'Please enter price' }]}
-              >
-                <InputNumber
-                  defaultValue={100}
-                  addonAfter="$"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="duration"
-                label="Duration (hh:mm)"
-                rules={[{ required: true, message: 'Please enter price' }]}
-              >
-                <Select
-                  size={size}
-                  onChange={onChangeDuration}
-                  style={{ width: 200 }}
-                  options={getDurationOptions()}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="description"
-                label="Description"
-                rules={[
-                  {
-                    required: true,
-                    message: 'please enter description',
-                  },
-                ]}
-              >
-                <Input.TextArea rows={4} placeholder="please enter description" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form> */}
-        {/* <Tabs
-          defaultActiveKey="1"
-          // tabPosition={'left'}
-          // style={{ height: 220 }}
-          items={TABS.map((_, i) => {
-            const id = String(i);
-            return {
-              label: _.label,
-              key: id,
-              disabled: i === 28,
-              children: _.children,
-            };
-          })}
-        /> */}
       </Drawer>
 
 

@@ -1,5 +1,6 @@
 import { appointmentAPI } from '@/apis/appointmentAPI';
-import { AppointmentType } from '@/types/appointment';
+import { AppointmentServiceType, AppointmentType } from '@/types/appointment';
+import { NailServiceType } from '@/types/service';
 import { create } from 'zustand';
 
 
@@ -11,10 +12,13 @@ export type AppointmentStore = {
   setShowAddAppointment: (isShowAddAppointment: boolean) => void;
   handleShowAddAppointment: (datetime: Date) => void;
   appointment?: AppointmentType | null;
+  updateAppointment: (appointment: AppointmentType) => void;
   getAppointments: () => Promise<void>;
+  appointmentServices: AppointmentServiceType[];
+  updateAppointmentServices: (services: AppointmentServiceType[]) => void;
 };
 
-const useAppointmentStore = create<AppointmentStore>((set) => ({
+const useAppointmentStore = create<AppointmentStore>((set, get) => ({
   appointments: [],
   appointment: null,
   addAppointment: (appointment) =>
@@ -36,7 +40,20 @@ const useAppointmentStore = create<AppointmentStore>((set) => ({
   getAppointments: async () => {
     const data = await appointmentAPI.getAppointments();
     set({ appointments: data });
+  },
+  appointmentCreate: null,
+  appointmentServices: [],
+  updateAppointmentServices: (services: AppointmentServiceType[]) => {
+    set({
+      appointmentServices: services,
+    })
+  },
+  updateAppointment: (appointment:AppointmentType) => {
+    set({
+      appointment: appointment,
+    })
   }
+    
 
 }));
 

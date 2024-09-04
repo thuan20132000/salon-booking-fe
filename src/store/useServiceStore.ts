@@ -1,7 +1,10 @@
 
 import { serviceAPI } from '@/apis/serviceAPI';
+import { AppointmentServiceType } from '@/types/appointment';
 import { NailServiceCategoryType, NailServiceType } from '@/types/service';
 import { create } from 'zustand';
+
+
 
 export type ServiceStore = {
   services: NailServiceType[];
@@ -11,6 +14,12 @@ export type ServiceStore = {
   updateService: (service: NailServiceType) => void;
   getServices: () => Promise<void>;
   getServiceCategories: () => Promise<void>;
+  selectedServices?: NailServiceType[];
+  setSelectedServices?: (services: NailServiceType[]) => void;
+  appointmentServices?: NailServiceType[];
+  setAppointmentServices: (services: NailServiceType[]) => void;
+  addAppointmentService?: (service: NailServiceType) => void;
+  resetServices?: () => void;
 };
 
 
@@ -31,6 +40,9 @@ export const useServiceStore = create<ServiceStore>((set) => ({
     const data = await serviceAPI.getServiceCategories();
     console.log('getServiceCategories: ', data);
     set({ serviceCategories: data });
-  }
-
+  },
+  selectedServices: [],
+  setSelectedServices: (services) => set({ selectedServices: services }),
+  appointmentServices: [],
+  setAppointmentServices: (services) => set({ appointmentServices: services }),
 }));

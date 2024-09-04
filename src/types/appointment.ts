@@ -9,14 +9,24 @@ export type AppointmentType = {
   datetime?: Date;
   duration?: string;
   status?: string;
-  services?: NailServiceType[];
+  services?: AppointmentServiceType[];
   type?: string;
   staff?: string;
   note?: string;
   created_at?: string;
   updated_at?: string;
-  employee?: EmployeeType;
   customer?: CustomerType;
   start_at?: Date;
   end_at?: Date;
+};
+
+export type AppointmentServiceType = {
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+  service?: NailServiceType;
+  appointment?: AppointmentType;
+  employee?: EmployeeType;
+  start_at?: Date | string;
+  duration?: string;
 };
