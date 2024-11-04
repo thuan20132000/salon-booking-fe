@@ -7,11 +7,11 @@ import TableTwo from "@/components/Tables/TableTwo";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import AddStaff from "@/components/Staff/AddStaff";
-import EmployeeListTable from "./components/EmployeeListTable";
-import EmployeeStatistic from "./components/EmployeeStatistic";
 import { Badge, Button, Calendar, CalendarProps } from "antd";
 import type { Dayjs } from 'dayjs';
 import { useRouter } from "next/navigation";
+import EmployeeListTable from "../components/EmployeeListTable";
+import EmployeeStatistic from "../components/EmployeeStatistic";
 
 
 const EmployeePage = () => {
@@ -46,7 +46,7 @@ const EmployeePage = () => {
 
     return (
       <ul className="events">
-        <Button onClick={()=>onDateClick(value)}>Add </Button>
+        <Button onClick={() => onDateClick(value)}>Add </Button>
       </ul>
     );
   };
@@ -59,7 +59,13 @@ const EmployeePage = () => {
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Employee" />
-      <EmployeeListTable />
+      <EmployeeStatistic />
+      <Calendar
+        onPanelChange={onPanelChange}
+        onChange={onCalendarChange}
+        onSelect={onCalendarSelect}
+        cellRender={dateCellRender}
+      />
     </DefaultLayout>
   );
 };

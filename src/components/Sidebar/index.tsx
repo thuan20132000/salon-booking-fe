@@ -45,6 +45,11 @@ const menuGroups = [
         route: "/invoices",
       },
       {
+        icon: <FileDoneOutlined />,
+        label: "Payroll",
+        route: "/payroll",
+      },
+      {
         icon: <UserOutlined />,
         label: "Employees",
         route: "/employees",

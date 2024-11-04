@@ -75,7 +75,7 @@ const AddEmployee = (props: Props) => {
       >
         <Form layout="vertical" hideRequiredMark>
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={12}>
               <Form.Item
                 name="name"
                 label="Name*"
@@ -84,75 +84,131 @@ const AddEmployee = (props: Props) => {
                 <Input placeholder="Please enter the name" />
               </Form.Item>
             </Col>
-          </Row>
-          <Row gutter={12}>
             <Col span={12}>
               <Form.Item
-                name="category"
-                label="Category*"
-                rules={[{ required: true, message: 'Please choose the category' }]}
+                name="nickname"
+                label="Nick Name*"
+                rules={[{ required: true, message: 'Please enter nick name' }]}
               >
-                <Select placeholder="Please choose the category">
-                  <Option value="nail">Nail</Option>
-                  <Option value="hair">Hair</Option>
-                  <Option value="skin">Skin</Option>
-                </Select>
+                <Input placeholder="Please enter the nick name" />
               </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
               <Form.Item
-                name="price"
-                label="Price($)*"
-                rules={[{ required: true, message: 'Please enter price' }]}
+                name="job-title"
+                label="Job Title"
               >
-                <InputNumber
-                  defaultValue={100}
-                  addonAfter="$"
-                />
+                <Input placeholder="Job Title" />
               </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
-                name="duration"
-                label="Duration (hh:mm)*"
-                rules={[{ required: true, message: 'Please enter duration' }]}
+                name="email"
+                label="Email"
+              >
+                <Input placeholder="Email" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="phone-number"
+                label="Phone Number"
+              >
+                <Input placeholder="Phone Number" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="insurance-number"
+                label="Insurance Number"
+              >
+                <Input placeholder="Insurance Number" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="employee-role"
+                label="Employee Role"
               >
                 <Select
-                  size={size}
+                  defaultValue="0"
+                  style={{ width: '100%' }}
                   onChange={handleChange}
-                  style={{ width: 200 }}
-                  options={getDurationOptions()}
+                  options={[
+                    { value: '0', label: 'Employee' },
+                    { value: '1', label: 'Manager' },
+                    { value: '2', label: 'Receptionist' },
+                    { value: '3', label: 'Employee None Calendar' },
+                    { value: '4', label: 'Viewer' },
+
+                  ]}
                 />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                name="original_price"
-                label="Original Price ($)"
-                rules={[{ required: false, message: 'Please enter original price' }]}
+                name="employee-level"
+                label="Employee Level"
               >
-                <InputNumber
-                  defaultValue={''}
-                  addonAfter="$"
-                />
-              </Form.Item>
-              <Form.Item
-                name="turn_number"
-                label="Turn Number"
-                rules={[{ required: false, message: 'Please enter turn number' }]}
-              >
-                <InputNumber
-                  defaultValue={''}
-                />
-              </Form.Item>
-              <Form.Item
-                name="deduction_cost"
-                label="Deduction Cost ($)"
-                rules={[{ required: false, message: 'Please enter deduction cost' }]}
-              >
-                <InputNumber
-                  defaultValue={''}
-                  addonAfter="$"
+                <Select
+                  defaultValue="Fresher"
+                  style={{ width: '100%' }}
+                  onChange={handleChange}
+                  options={[
+                    { value: 'Fresher', label: 'Fresher' },
+                    { value: 'Junior', label: 'Junior' },
+                    { value: 'Senior', label: 'Senior' },
+                  ]}
                 />
               </Form.Item>
             </Col>
           </Row>
+
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="birthday"
+                label="Birthday"
+              >
+                <DatePicker placeholder='Birthdate' onChange={onChange} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="start-date"
+                label="Start Date"
+              >
+                <DatePicker placeholder='Start Date' onChange={onChange} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name="address"
+                label="Adress"
+              >
+                <Input.TextArea rows={4} placeholder="Address" />
+                </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item
+                name="employee-note"
+                label="Employee Note"
+              >
+                <Input.TextArea rows={4} placeholder="Employee Note" />
+                </Form.Item>
+            </Col>
+          </Row>
+
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item

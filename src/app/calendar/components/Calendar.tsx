@@ -6,17 +6,29 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import timeGridPlugin from '@fullcalendar/timegrid'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import useAppointmentStore, { AppointmentStore } from "@/store/useAppointmentStore";
-import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb';
 import AddAppointment from '@/app/appointments/components/AddAppointment';
-import { Space } from 'antd';
+import { Flex, Space, Tag } from 'antd';
+import useAppointmentServiceStore, { AppointmentServiceStore } from '@/store/useAppointmentServiceStore';
+import { useEffect, useState } from 'react';
+import { AppointmentServiceType } from '@/types/appointment';
+import { EventContentArg, EventInput, EventSourceInput } from '@fullcalendar/core';
+import dayjs from 'dayjs';
 
 const Calendar = () => {
   const { isShowAddAppointment, setShowAddAppointment, handleShowAddAppointment } = useAppointmentStore((state: AppointmentStore) => state);
-  const events = [
+  const {
+    appointmentServices,
+    getAppointmentServices
+  } = useAppointmentServiceStore((state: AppointmentServiceStore) => state);
+
+  const [calendarEvents, setCalendarEvents] = useState<EventSourceInput>()
+
+  const events: EventSourceInput = [
     {
       title: 'Meeting',
       start: new Date(),
       end: new Date(),
+
     },
     {
       title: 'Meeting 2',
@@ -30,17 +42,24 @@ const Calendar = () => {
     },
     {
       title: 'Meeting 4',
+      data: "safas",
       start: new Date(),
       end: new Date(),
     }
   ]
 
-  function renderEventContent(eventInfo: any) {
+  function renderEventContent(event: EventContentArg) {
+    let appointmentService: AppointmentServiceType = event.event.extendedProps as AppointmentServiceType;
+    console.log('====================================');
+    console.log('appointmentService:: ', event);
+    console.log('====================================');
+
     return (
-      <>
-        <b>{eventInfo.timeText}</b>
-        <i> {eventInfo.event.title}</i>
-      </>
+      <Flex className='flex-wrap'>
+        <Tag>{appointmentService.service?.name}</Tag>
+        <Tag>{appointmentService.appointment?.customer?.name}</Tag>
+        <Tag>{appointmentService.employee?.username}</Tag>
+      </Flex>
     )
   }
 
@@ -48,6 +67,31 @@ const Calendar = () => {
     setShowAddAppointment(true);
   }
 
+  const showAppointmentServiceDetail = (appointmentService: AppointmentServiceType) => {
+    console.log('====================================');
+    console.log('appointmentService:: ', appointmentService);
+    console.log('====================================');
+  }
+
+  useEffect(() => {
+    getAppointmentServices()
+  }, [])
+
+  useEffect(() => {
+    let calendarEvents: EventSourceInput = appointmentServices.map((appointmentService) => {
+      return {
+        start: appointmentService.start_at,
+        end: dayjs(appointmentService.start_at).add(Number(appointmentService.duration), 'minutes').toDate(),
+        id: appointmentService.id,
+        title: appointmentService.service?.name,
+        extendedProps: {
+          ...appointmentService,
+        }
+
+      }
+    })
+    setCalendarEvents(calendarEvents)
+  }, [appointmentServices])
 
 
   return (
@@ -60,8 +104,12 @@ const Calendar = () => {
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin, resourceTimelinePlugin]}
         // initialView='dayGridMonth'
         weekends={true}
-        events={events}
+        events={calendarEvents}
         eventContent={renderEventContent}
+        eventClick={(info) => showAppointmentServiceDetail(info.event.extendedProps)}
+        eventMinHeight={30}
+        eventClassNames={''}
+        // eventBackgroundColor='coral'
         // eventClick={(info) => alert('Event: ' + info.event.title)}
         // eventChange={(info) => alert('Event: ' + info.event.title)}
         editable={true}
@@ -78,6 +126,9 @@ const Calendar = () => {
 
         // resourceAßreaWidth={'15%'}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
+        nowIndicator={true}
+        timeZone='UTC'
+        slotDuration='00:30:00'
       />
 
     </div>
