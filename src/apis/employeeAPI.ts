@@ -21,9 +21,10 @@ const getEmployeeById = async (id: number): Promise<EmployeeType> => {
   }
 };
 
-const createEmployee = async (employee: Omit<EmployeeType, 'id'>): Promise<EmployeeType> => {
+const createEmployee = async (employee: EmployeeType): Promise<EmployeeType> => {
   try {
-    const response = await axiosInstance.post('/employees', employee);
+    
+    const response = await axiosInstance.post('/employees/', employee);
     return response.data;
   } catch (error) {
     console.error('Error creating employee:', error);
@@ -31,9 +32,9 @@ const createEmployee = async (employee: Omit<EmployeeType, 'id'>): Promise<Emplo
   }
 };
 
-const updateEmployee = async (id: number, updatedEmployee: Partial<EmployeeType>): Promise<EmployeeType> => {
+const updateEmployeeById = async (id: number, updatedEmployee: Partial<EmployeeType>): Promise<EmployeeType> => {
   try {
-    const response = await axiosInstance.put(`/employees/${id}`, updatedEmployee);
+    const response = await axiosInstance.put(`/employees/${id}/`, updatedEmployee);
     return response.data;
   } catch (error) {
     console.error(`Error updating employee with id ${id}:`, error);
@@ -54,6 +55,6 @@ export const employeeAPI = {
   getEmployees,
   getEmployeeById,
   createEmployee,
-  updateEmployee,
+  updateEmployeeById,
   deleteEmployee
 };

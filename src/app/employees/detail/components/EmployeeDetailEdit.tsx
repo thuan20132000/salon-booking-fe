@@ -1,96 +1,72 @@
-'use client';
-import { NailServiceType } from '@/types/service';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Cascader, Col, DatePicker, Drawer, DrawerProps, Form, Input, InputNumber, RadioChangeEvent, Row, Select, Space } from 'antd';
-import React, { useState } from 'react'
-const { Option } = Select;
-import type { ConfigProviderProps, SelectProps } from 'antd';
+import React, { use, useEffect } from 'react';
+import { Card, Descriptions, Avatar, Form, Row, Col, Input, Select, DatePicker, RadioChangeEvent, Space, Button } from 'antd';
 import { EmployeeType } from '@/types/user';
-import { employeeAPI } from '@/apis/employeeAPI';
 import { EmployeeStore, useEmployeeStore } from '@/store/useEmployeeStore';
-type SizeType = ConfigProviderProps['componentSize'];
 
-type Props = {}
+type Props = {
+  employee?: EmployeeType | undefined;
+}
 
-const AddEmployee = (props: Props) => {
-  const [open, setOpen] = useState(false);
-  const [placement, setPlacement] = useState<DrawerProps['placement']>('right');
-  const [service, setService] = useState<NailServiceType>();
-  const [size, setSize] = useState<SizeType>('middle');
-  const { getEmployees, addEmployee } = useEmployeeStore((state: EmployeeStore) => state);
+const EmployeeDetailEdit = ({ employee }: Props) => {
+  // const employee = {
+  //   name: 'John Doe',
+  //   position: 'Senior Developer',
+  //   department: 'Engineering',
+  //   email: 'john.doe@example.com',
+  //   phone: '123-456-7890',
+  //   avatar: 'https://via.placeholder.com/150'
+  // };
+  const [form] = Form.useForm();
+  const { updateEmployee } = useEmployeeStore((state: EmployeeStore) => state);
 
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
-  const onChange = (e: RadioChangeEvent) => {
-    setPlacement(e.target.value);
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  const getDurationOptions = () => {
-    const options: SelectProps['options'] = [];
-    for (let i = 30; i <= 300; i += 30) {
-      // format duration in hours if it is more than 60 minutes
-      const hours = Math.floor(i / 60);
-      const mins = i % 60;
-
-      const hour_string = hours > 0 ? `${hours}` : '0';
-      const min_string = mins > 0 ? `${mins}` : '00';
-
-      const duration_formatted = `${hour_string}:${min_string}`;
-
-      options.push({ value: i, label: duration_formatted });
-    }
-    return options;
-  }
 
   const handleChange = (value: string | string[]) => {
     console.log(`Selected: ${value}`);
   };
-  const [form] = Form.useForm();
+
+
+  const onChange = (e: RadioChangeEvent) => {
+    console.log(`radio checked:${e.target.value}`);
+  };
 
   const onSubmit = async () => {
     console.log('onSubmit');
     const values: EmployeeType = await form.validateFields()
+    values.id = employee?.id;
     console.log('values: ', values);
+    await updateEmployee(values);
     // form.resetFields();
-    await addEmployee(values)
-    form.resetFields();
-    setOpen(false);
-    await getEmployees();
+    // await addEmployee(values)
+    // form.resetFields();
+    // setOpen(false);
+    // await getEmployees();
 
 
   }
 
+  useEffect(() => {
+    form.setFieldsValue({
+      id: employee?.id,
+      name: employee?.name,
+      nickname: employee?.nickname,
+      job_title: employee?.job_title,
+      email: employee?.email,
+      phone_number: employee?.phone_number,
+      insurance_number: employee?.insurance_number,
+      employee_role: employee?.role,
+      employee_level: employee?.level,
+      birthday: employee?.birth_date,
+      start_date: employee?.start_date,
+      address: employee?.address,
+      employee_note: employee?.employee_note,
+      description: employee?.description,
+    });
+  }, [employee, form]);
+
 
   return (
-    <div style={{ marginBottom: 20, alignSelf: 'flex-end' }}>
-      <Button onClick={showDrawer} icon={<PlusOutlined />}>
-        New Employee
-      </Button>
-      <Drawer
-        title="Create a new employee"
-        width={720}
-        onClose={onClose}
-        open={open}
-        styles={{
-          body: {
-            paddingBottom: 80,
-          },
-        }}
-        extra={
-          <Space>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button onClick={onSubmit} >
-              Submit
-            </Button>
-          </Space>
-        }
-      >
+    <div>
+      <Card style={{ margin: '0 auto' }}>
         <Form layout="vertical" form={form}>
           <Row gutter={16}>
             <Col span={12}>
@@ -239,11 +215,14 @@ const AddEmployee = (props: Props) => {
             </Col>
           </Row>
         </Form>
-      </Drawer>
-
-
+        <Space>
+          <Button onClick={onSubmit} className='justify-end'>
+            Submit
+          </Button>
+        </Space>
+      </Card>
     </div>
-  )
-}
+  );
+};
 
-export default AddEmployee
+export default EmployeeDetailEdit;

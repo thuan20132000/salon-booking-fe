@@ -19,15 +19,31 @@ const EmployeeListTable: React.FC = () => {
     console.log('showEmployeeSalary: ', employee);
     router.push(`/employees/employee?employee_id=${employee.id}`);
 
+  }
 
+  const showEmployeeDetail = (employee: EmployeeType) => {
+    console.log('showEmployeeDetail: ', employee);
+    router.push(`/employees/detail?employee_id=${employee.id}`);
 
   }
 
   const columns: TableProps<EmployeeType>['columns'] = [
     {
-      title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text, record) => <a onClick={() => showEmployeeDetail(record)}>{text}</a>,
+    },
+    {
+      title: 'Nickname',
+      dataIndex: 'nickname',
+      key: 'nickname',
       render: (text) => <a>{text}</a>,
     },
     {
@@ -41,45 +57,25 @@ const EmployeeListTable: React.FC = () => {
       key: 'email',
     },
     {
-      title: 'Job Title',
-      key: 'job_title',
-      dataIndex: 'job_title',
-      // render: (_, {  }) => (
-      //   <>
-      //     {tags.map((tag) => {
-      //       let color = tag.length > 5 ? 'geekblue' : 'green';
-      //       if (tag === 'loser') {
-      //         color = 'volcano';
-      //       }
-      //       return (
-      //         <Tag color={color} key={tag}>
-      //           {tag.toUpperCase()}
-      //         </Tag>
-      //       );
-      //     })}
-      //   </>
-      // ),
-    },
-    {
       title: 'Action',
       key: 'action',
       render: (_, record) => {
         return (
           <Space size="middle">
-            <Button icon={<EditOutlined />} />
-            <Button icon={<PayCircleOutlined />} onClick={()=>showEmployeeSalary(record)} />
+            <Button icon={<EditOutlined />} onClick={() => showEmployeeDetail(record)} />
+            <Button icon={<PayCircleOutlined />} onClick={() => showEmployeeSalary(record)} />
             <Button icon={<DeleteOutlined />} />
           </Space>
         )
       }
-  
+
     },
   ];
-  
+
 
   useEffect(() => {
-    // getEmployees();
-    setEmployees(EMPLOYEES)
+    getEmployees();
+    // setEmployees(EMPLOYEES)
   }, [])
 
   return (

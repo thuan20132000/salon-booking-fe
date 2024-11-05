@@ -29,8 +29,11 @@ export type EmployeeType = {
   id?: number;
   first_name?: string;
   last_name?: string;
+  name?: string;
+  nickname?: string;
   username?: string;
   phone_number?: string;
+  avatar?: string;
   email?: string;
   role?: UserRolesType;
   level?: UserLevelType;
@@ -42,6 +45,8 @@ export type EmployeeType = {
   status?: string;
   created_at?: string;
   updated_at?: string;
+  employee_note?: string;
+  description?: string;
 };
 
 export type CustomerType = UserType & {
