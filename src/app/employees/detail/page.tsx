@@ -5,7 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Badge, Button, Calendar, CalendarProps, Menu, MenuProps, Tabs } from "antd";
 
 import type { Dayjs } from 'dayjs';
-import { useRouter } from "next/navigation";
+
 import { UserAddOutlined } from "@ant-design/icons";
 import type { TabsProps } from 'antd';
 import { useEffect, useState } from "react";
@@ -13,12 +13,17 @@ import { EmployeeType } from "@/types/user";
 import { EmployeeStore, useEmployeeStore } from "@/store/useEmployeeStore";
 import EmployeeDetail from "./components/EmployeeDetail";
 import EmployeeDetailEdit from "./components/EmployeeDetailEdit";
+import { useSearchParams } from 'next/navigation'
 
 
 const EmployeePage = () => {
+  const searchParams = useSearchParams()
+ 
+  const search = searchParams.get('search')
+  const employee_id = searchParams.get('employee_id')
 
   const [employee, setEmployee] = useState<EmployeeType>();
-  const { getEmpployeeById } = useEmployeeStore((state: EmployeeStore) => state);
+  const { getEmployeeById } = useEmployeeStore((state: EmployeeStore) => state);
 
   const items: TabsProps['items'] = [
     {
@@ -37,7 +42,7 @@ const EmployeePage = () => {
       label: 'Skills',
       key: 'skills',
       icon: <UserAddOutlined />,
-      children: <div>Details</div>
+      children: <div>Details {employee_id}</div>
     },
     {
       label: 'Office Hours',
@@ -77,9 +82,7 @@ const EmployeePage = () => {
   };
 
   useEffect(() => {
-    // fetch employee details
-    // setEmployee()
-    getEmpployeeById(1).then((data) => {
+    getEmployeeById(Number(employee_id)).then((data) => {
       console.log('data: ', data);
       setEmployee(data);
     })
@@ -89,7 +92,7 @@ const EmployeePage = () => {
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Employee Detail" />
-      <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
+      <Tabs defaultActiveKey="1" items={items} onChange={onChange} key={employee?.id} />
     </DefaultLayout>
   );
 };

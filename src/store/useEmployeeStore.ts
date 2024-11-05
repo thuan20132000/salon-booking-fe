@@ -12,7 +12,7 @@ export type EmployeeStore = {
   updateEmployee: (employee: EmployeeType) => Promise<EmployeeType>;
   getEmployees: () => Promise<void>;
   setEmployees: (employees: EmployeeType[]) => void;
-  getEmpployeeById: (id: number) => Promise<EmployeeType>;
+  getEmployeeById: (id: number) => Promise<EmployeeType>;
 };
 
 export const useEmployeeStore = create<EmployeeStore>((set) => ({
@@ -39,7 +39,7 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
     console.log('getEmployees: ', data);
     set({ employees: data });
   },
-  getEmpployeeById: async (id: number): Promise<EmployeeType> => {
+  getEmployeeById: async (id: number): Promise<EmployeeType> => {
     const data = await employeeAPI.getEmployeeById(id);
     console.log('getEmployeeById: ', data);
     set({ employee: data });

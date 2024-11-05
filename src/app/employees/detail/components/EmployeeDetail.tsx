@@ -4,10 +4,9 @@ import { EmployeeType } from '@/types/user';
 
 type Props = {
   employee?: EmployeeType | undefined;
-  onClick?: () => void;
 }
 
-const EmployeeDetail = ({ employee, onClick }: Props) => {
+const EmployeeDetail = ({ employee }: Props) => {
   // const employee = {
   //   name: 'John Doe',
   //   position: 'Senior Developer',
