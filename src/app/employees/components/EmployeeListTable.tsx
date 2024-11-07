@@ -17,7 +17,7 @@ const EmployeeListTable: React.FC = () => {
 
   const showEmployeeSalary = (employee: EmployeeType) => {
     console.log('showEmployeeSalary: ', employee);
-    router.push(`/employees/employee?employee_id=${employee.id}`);
+    router.push(`/employees/payroll-calendar?employee_id=${employee.id}`);
 
   }
 

@@ -35,21 +35,6 @@ const EmployeePage = () => {
 
   const router = useRouter();
 
-  const dateCellRender = (value: Dayjs) => {
-
-    const onDateClick = (value: Dayjs) => {
-      console.log('====================================');
-      console.log('date click: ', value.format('YYYY-MM-DD'));
-      console.log('====================================');
-      router.push(`/payroll?date=${value.format('YYYY-MM-DD')}`,);
-    }
-
-    return (
-      <ul className="events">
-        <Button onClick={()=>onDateClick(value)}>Add </Button>
-      </ul>
-    );
-  };
 
   // const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
   //   if (info.type === 'month') return monthCellRender(current);

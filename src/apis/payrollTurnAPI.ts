@@ -1,6 +1,6 @@
 import { EmployeeType } from '@/types/user';
 import axiosInstance from './base';
-import { EmployeePayrollTurn, PayrollTurn } from '@/types/payroll';
+import { EmployeePayrollTurn, EmployeePayrollTurnResponse, PayrollTurn, PayrollTurnResponse } from '@/types/payroll';
 
 export type EmployeePayrollTurnRequestParams = {
   employee?: number;
@@ -9,8 +9,13 @@ export type EmployeePayrollTurnRequestParams = {
   month?: number;
 };
 
+export type EmployeeTurnRquestParams = {
+  employee: number;
+  date: any;
+};
 
-const getEmployeePayrollTurn = async (params: EmployeePayrollTurnRequestParams): Promise<EmployeePayrollTurn[]> => {
+
+const getEmployeePayrollTurn = async (params: EmployeePayrollTurnRequestParams): Promise<EmployeePayrollTurnResponse> => {
   try {
 
     const response = await axiosInstance.get('/employee-payroll-turn/', { params });
@@ -21,6 +26,39 @@ const getEmployeePayrollTurn = async (params: EmployeePayrollTurnRequestParams):
   }
 };
 
+const getEmployeeTurns = async (params: EmployeeTurnRquestParams): Promise<PayrollTurnResponse> => {
+  try {
+    const response = await axiosInstance.get(`/payroll-turn/turns/`, { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+}
+
+const deletePayrollTurn = async (id: number) => {
+  try {
+    const response = await axiosInstance.delete(`/payroll-turn/${id}/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+}
+
+const bulkUpdatePayrollTurn = async (payrollTurn: PayrollTurn[]) => {
+  try {
+    const response = await axiosInstance.put(`/payroll-turn/bulk-update/`, payrollTurn);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+}
+
 export const payrollTurnAPI = {
   getEmployeePayrollTurn,
+  getEmployeeTurns,
+  deletePayrollTurn,
+  bulkUpdatePayrollTurn
 };

@@ -24,10 +24,23 @@ export type EmployeePayrollTurn = {
 };
 
 export type PayrollTurn = {
-  id: number;
+  id?: number;
   service_name: string;
   price: number;
   employee_payroll_turn: number | EmployeePayrollTurn;
   created_at?: Date;
   updated_at?: Date;
+  key?: number;
 };
+
+export type PayrollTurnResponse = {
+  total: number;
+  total_turn_price: number;
+  data: PayrollTurn[];
+}
+
+export type EmployeePayrollTurnResponse = {
+  total: number;
+  data: EmployeePayrollTurn[];
+  total_price: number;
+}

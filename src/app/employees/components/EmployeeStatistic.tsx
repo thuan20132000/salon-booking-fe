@@ -25,10 +25,10 @@ export default function EmployeeStatistic(props: IAppProps) {
           <Statistic
             title="Month"
             value={props.monthlyTotal}
-            precision={2}
+            // precision={2}
             valueStyle={{ color: '#3f8600' }}
-            prefix={<ArrowUpOutlined />}
-            suffix="%"
+            // prefix={<ArrowUpOutlined />}
+            suffix="$"
           />
         </Card>
       </Flex>

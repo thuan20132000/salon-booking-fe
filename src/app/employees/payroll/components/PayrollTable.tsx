@@ -1,8 +1,12 @@
 'use client';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { GetRef, InputNumberProps, InputRef, StatisticProps, TableProps } from 'antd';
 import { Button, Col, DatePicker, Flex, Form, Input, InputNumber, Popconfirm, Row, Space, Statistic, Table, Typography } from 'antd';
 import dayjs from 'dayjs';
+import { useSearchParams } from 'next/navigation';
+import { PayrollStore, usePayrollStore } from '@/store/usePayrollStore';
+import { PayrollTurn } from '@/types/payroll';
+import { DeleteFilled, DeleteOutlined } from '@ant-design/icons';
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -104,7 +108,7 @@ interface DataType {
   price: number;
 }
 
-type ColumnTypes = Exclude<TableProps<DataType>['columns'], undefined>;
+type ColumnTypes = Exclude<TableProps<PayrollTurn>['columns'], undefined>;
 
 const generateData = (): DataType[] => {
   const services = [''];
@@ -120,75 +124,110 @@ const DEFAULT_TURN: DataType[] = generateData()
 
 const PayrollTable: React.FC = () => {
   const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState('');
   const [total, setTotal] = useState(0);
   const dateFormat = 'YYYY/MM/DD';
+  const searchParams = useSearchParams()
+  const turn_date = searchParams.get('date')
+  const employee_id = searchParams.get('employee')
 
+  const [totalTurnPrice, setTotalTurnPrice] = useState(0)
 
-  const [dataSource, setDataSource] = useState<DataType[]>(DEFAULT_TURN);
+  const { getEmployeeTurns, deletePayrollTurn, bulkUpdatePayrollTurn } = usePayrollStore((state: PayrollStore) => state)
 
-  const [count, setCount] = useState(2);
+  const [dataSource, setDataSource] = useState<PayrollTurn[]>([]);
 
-  const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
-  };
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
+
     {
-      title: 'turn',
+      title: 'Turn',
       dataIndex: 'turn',
-      width: '30%',
-      render: (_, record) => <a href="">{Number(record.key) + 1}</a>
+      width: '10%',
+      render: (_, record, index) => <a href="">{Number(index) + 1}</a>
     },
     {
-      title: 'service',
-      dataIndex: 'service',
-      editable: true
-    },
-    {
-      title: 'price',
-      dataIndex: 'price',
+      title: 'Service',
+      dataIndex: 'service_name',
       editable: true,
       width: '30%'
     },
-    // {
-    //   title: 'operation',
-    //   dataIndex: 'operation',
-    //   render: (_, record) =>
-    //     dataSource.length >= 1 ? (
-    //       <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-    //         <a>Delete</a>
-    //       </Popconfirm>
-    //     ) : null,
-    // },
+    {
+      title: 'Price',
+      dataIndex: 'price',
+      editable: true,
+    },
+    {
+      title: 'operation',
+      dataIndex: 'operation',
+      render: (_, record) =>
+        dataSource.length >= 1 ? (
+          <Popconfirm title="Sure to delete?" onConfirm={() => handleDeleteRow(record)}>
+            <DeleteFilled style={{ color: 'red' }} />
+          </Popconfirm>
+        ) : null,
+      width: '15%'
+    },
   ];
 
-  const handleAdd = () => {
-    const newData: DataType = {
-      key: count,
-      service: '32',
+
+  const handleDeleteRow = (row: PayrollTurn) => {
+    const newData = [...dataSource];
+    if (row.id) {
+      deletePayrollTurn(Number(row.id))
+        .then(() => {
+          setDataSource(newData.filter((item) => item.key != row.key));
+        })
+    } else {
+      setDataSource(newData.filter((item) => item.key != row.key));
+    }
+
+  }
+
+  const handleAddRow = () => {
+    const newRow: PayrollTurn = {
+      service_name: '',
       price: 0,
+      employee_payroll_turn: Number(employee_id),
+      key: dataSource.length
     };
-    setDataSource([...dataSource, newData]);
-    setCount(count + 1);
+    setDataSource([...dataSource, newRow]);
   };
 
-  const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
+  const handleUpdate = () => {
     console.log('====================================');
-    console.log('newdata: ', newData);
+    console.log('dataSource: ', dataSource);
     console.log('====================================');
+    bulkUpdatePayrollTurn(dataSource)
+      .then((res) => {
+        console.log('====================================');
+        console.log('bulkUpdatePayrollTurn: ', res);
+        console.log('================================');
+      })
+
+  }
+
+  const getTotalTurnPrice = useCallback(() => {
     let total = 0
-    total = newData?.map((e) => Number(e.price)).reduce((prev, cur) => Number(prev) + Number(cur), 0)
+    total = dataSource?.map((e) => Number(e.price)).reduce((prev, cur) => Number(prev) + Number(cur), 0)
     setTotal(total)
+    setTotalTurnPrice(total)
+    return total
+  }, [dataSource])
+
+  const handleSave = (row: PayrollTurn) => {
+    const newData = [...dataSource];
+    const newDataSource = newData.map((item) => {
+      if (item.key == row.key) {
+        return row
+      }
+      return item
+    });
+    setDataSource(newDataSource);
+    console.log('====================================');
+    // console.log('newdata: ', newData);
+    console.log('row: ', row);
+
+    console.log('====================================');
   };
 
   const components = {
@@ -204,7 +243,7 @@ const PayrollTable: React.FC = () => {
     }
     return {
       ...col,
-      onCell: (record: DataType) => ({
+      onCell: (record: PayrollTurn,) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
@@ -214,32 +253,69 @@ const PayrollTable: React.FC = () => {
     };
   });
 
+  useEffect(() => {
+    getEmployeeTurns({
+      employee: Number(employee_id),
+      date: turn_date
+    })
+      .then((res) => {
+        console.log('getEmployeeTurns: ', res);
+        setTotalTurnPrice(res.total_turn_price)
+        let data = res.data.map((item, index) => {
+          return {
+            ...item,
+            key: index
+          }
+        })
+        setDataSource(data)
+      })
+  }, [turn_date, employee_id])
+
 
   return (
     <Form form={form} component={false}>
       <Flex className='mb-2'>
         <Flex>
-          <DatePicker defaultValue={dayjs('2015/01/01', dateFormat)} format={dateFormat} />
-          <Statistic
-            value={total}
+          <DatePicker defaultValue={dayjs(turn_date, dateFormat)} format={dateFormat} disabled />
+          {/* <Statistic
+            value={totalTurnPrice}
             title='Total: '
             style={{ flex: 1, display: 'flex', alignItems: 'center', paddingLeft: 20 }}
             valueStyle={{ paddingLeft: 10 }}
-          />
-        </Flex>
-        <Flex>
-          <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-            Add a row
-          </Button>
+          /> */}
         </Flex>
       </Flex>
-      <Table<DataType>
+      <Table<PayrollTurn>
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
         columns={columns as ColumnTypes}
         pagination={false}
+        footer={
+          () => (
+            <Row>
+              <Col span={12}>
+                <Space>
+                  <Button onClick={handleAddRow} >
+                    Add a row
+                  </Button>
+                  <Button onClick={handleUpdate} >
+                    Update
+                  </Button>
+                </Space>
+              </Col>
+              <Col span={12}>
+                <Statistic
+                  title='Total'
+                  value={getTotalTurnPrice()}
+                  precision={2}
+                  valueStyle={{ color: '#cf1322' }}
+                />
+              </Col>
+            </Row>
+          )
+        }
       />
     </Form>
   );
