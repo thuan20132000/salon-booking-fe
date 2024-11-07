@@ -5,7 +5,7 @@ import { Button, Col, DatePicker, Flex, Form, Input, InputNumber, Popconfirm, Ro
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import { PayrollStore, usePayrollStore } from '@/store/usePayrollStore';
-import { PayrollTurn } from '@/types/payroll';
+import { EmployeePayrollTurn, PayrollTurn } from '@/types/payroll';
 import { DeleteFilled, DeleteOutlined } from '@ant-design/icons';
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
@@ -129,10 +129,11 @@ const PayrollTable: React.FC = () => {
   const searchParams = useSearchParams()
   const turn_date = searchParams.get('date')
   const employee_id = searchParams.get('employee')
+  const [employeeDateTurn, setEmployeeDateTurn] = useState<EmployeePayrollTurn>()
 
   const [totalTurnPrice, setTotalTurnPrice] = useState(0)
 
-  const { getEmployeeTurns, deletePayrollTurn, bulkUpdatePayrollTurn } = usePayrollStore((state: PayrollStore) => state)
+  const { getEmployeeTurns, getEmployeePayrollDailyTurns, getEmployeePayrollTurns, deletePayrollTurn, bulkUpdatePayrollTurn } = usePayrollStore((state: PayrollStore) => state)
 
   const [dataSource, setDataSource] = useState<PayrollTurn[]>([]);
 
@@ -197,12 +198,14 @@ const PayrollTable: React.FC = () => {
     console.log('====================================');
     console.log('dataSource: ', dataSource);
     console.log('====================================');
-    bulkUpdatePayrollTurn(dataSource)
-      .then((res) => {
-        console.log('====================================');
-        console.log('bulkUpdatePayrollTurn: ', res);
-        console.log('================================');
-      })
+    if (employeeDateTurn) {
+      bulkUpdatePayrollTurn(employeeDateTurn, dataSource)
+        .then((res) => {
+          console.log('====================================');
+          console.log('bulkUpdatePayrollTurn: ', res);
+          console.log('================================');
+        })
+    }
 
   }
 
@@ -223,11 +226,6 @@ const PayrollTable: React.FC = () => {
       return item
     });
     setDataSource(newDataSource);
-    console.log('====================================');
-    // console.log('newdata: ', newData);
-    console.log('row: ', row);
-
-    console.log('====================================');
   };
 
   const components = {
@@ -254,20 +252,21 @@ const PayrollTable: React.FC = () => {
   });
 
   useEffect(() => {
-    getEmployeeTurns({
+    getEmployeePayrollDailyTurns({
       employee: Number(employee_id),
-      date: turn_date
+      date: turn_date || undefined
     })
       .then((res) => {
         console.log('getEmployeeTurns: ', res);
-        setTotalTurnPrice(res.total_turn_price)
-        let data = res.data.map((item, index) => {
+        setTotalTurnPrice(Number(res.total_price))
+        setEmployeeDateTurn(res)
+        let data = res?.payroll_turns?.map((item, index) => {
           return {
             ...item,
             key: index
           }
         })
-        setDataSource(data)
+        setDataSource(data || [])
       })
   }, [turn_date, employee_id])
 

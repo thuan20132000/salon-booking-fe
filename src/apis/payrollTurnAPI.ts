@@ -46,9 +46,19 @@ const deletePayrollTurn = async (id: number) => {
   }
 }
 
-const bulkUpdatePayrollTurn = async (payrollTurn: PayrollTurn[]) => {
+const bulkUpdatePayrollTurn = async (empPayrollTurn: EmployeePayrollTurn, payrollTurn: PayrollTurn[]) => {
   try {
-    const response = await axiosInstance.put(`/payroll-turn/bulk-update/`, payrollTurn);
+    const response = await axiosInstance.put(`/employee-payroll-turn/${empPayrollTurn.id}/bulk-update-turn/`, payrollTurn);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+}
+
+const getEmployeePayrollDailyTurns = async (params: EmployeePayrollTurnRequestParams): Promise<EmployeePayrollTurn> => {
+  try {
+    const response = await axiosInstance.get('/employee-payroll-turn/daily-turn/', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching employees:', error);
@@ -60,5 +70,6 @@ export const payrollTurnAPI = {
   getEmployeePayrollTurn,
   getEmployeeTurns,
   deletePayrollTurn,
-  bulkUpdatePayrollTurn
+  bulkUpdatePayrollTurn,
+  getEmployeePayrollDailyTurns
 };
