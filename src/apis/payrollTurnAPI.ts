@@ -14,11 +14,27 @@ export type EmployeeTurnRquestParams = {
   date: any;
 };
 
+export type CreateEmployeePayrollTurnRequest = {
+  employee: number;
+  date: string;
+};
+
 
 const getEmployeePayrollTurn = async (params: EmployeePayrollTurnRequestParams): Promise<EmployeePayrollTurnResponse> => {
   try {
 
     const response = await axiosInstance.get('/employee-payroll-turn/', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+};
+
+const createEmployeePayrollTurnByDate = async (data: CreateEmployeePayrollTurnRequest): Promise<EmployeePayrollTurn> => {
+  try {
+
+    const response = await axiosInstance.post('/employee-payroll-turn/', data);
     return response.data;
   } catch (error) {
     console.error('Error fetching employees:', error);
@@ -71,5 +87,6 @@ export const payrollTurnAPI = {
   getEmployeeTurns,
   deletePayrollTurn,
   bulkUpdatePayrollTurn,
-  getEmployeePayrollDailyTurns
+  getEmployeePayrollDailyTurns,
+  createEmployeePayrollTurnByDate
 };

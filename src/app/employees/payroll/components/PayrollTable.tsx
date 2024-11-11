@@ -1,12 +1,13 @@
 'use client';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { GetRef, InputNumberProps, InputRef, StatisticProps, TableProps } from 'antd';
-import { Button, Col, DatePicker, Flex, Form, Input, InputNumber, Popconfirm, Row, Space, Statistic, Table, Typography } from 'antd';
+import { Button, Col, DatePicker, Flex, Form, Input, Popconfirm, Row, Space, Statistic, Table, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'next/navigation';
 import { PayrollStore, usePayrollStore } from '@/store/usePayrollStore';
 import { EmployeePayrollTurn, PayrollTurn } from '@/types/payroll';
-import { DeleteFilled, DeleteOutlined } from '@ant-design/icons';
+import { DeleteFilled, DeleteOutlined, SmileOutlined } from '@ant-design/icons';
+import { NotificationStore, useNotificationStore } from '@/store/useNotificationStore';
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -84,6 +85,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         style={{ margin: 0 }}
         name={dataIndex}
         rules={[{ required: true, message: `${title} is required.` }]}
+        initialValue={'-'}
       >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
@@ -130,10 +132,12 @@ const PayrollTable: React.FC = () => {
   const turn_date = searchParams.get('date')
   const employee_id = searchParams.get('employee')
   const [employeeDateTurn, setEmployeeDateTurn] = useState<EmployeePayrollTurn>()
+  const [isTurnChanged, setIsTurnChanged] = useState(false)
 
   const [totalTurnPrice, setTotalTurnPrice] = useState(0)
+  const { notify } = useNotificationStore((state: NotificationStore) => state)
 
-  const { getEmployeeTurns, getEmployeePayrollDailyTurns, getEmployeePayrollTurns, deletePayrollTurn, bulkUpdatePayrollTurn } = usePayrollStore((state: PayrollStore) => state)
+  const { getEmployeeTurns, getEmployeePayrollDailyTurns, getEmployeePayrollTurns, deletePayrollTurn, bulkUpdatePayrollTurn, createEmployeePayrollTurnByDate } = usePayrollStore((state: PayrollStore) => state)
 
   const [dataSource, setDataSource] = useState<PayrollTurn[]>([]);
 
@@ -171,28 +175,32 @@ const PayrollTable: React.FC = () => {
   ];
 
 
-  const handleDeleteRow = (row: PayrollTurn) => {
-    const newData = [...dataSource];
-    if (row.id) {
-      deletePayrollTurn(Number(row.id))
-        .then(() => {
-          setDataSource(newData.filter((item) => item.key != row.key));
-        })
-    } else {
-      setDataSource(newData.filter((item) => item.key != row.key));
+  const handleDeleteRow = async (row: PayrollTurn) => {
+    try {
+      const newData = [...dataSource];
+      if (row.id) {
+        await deletePayrollTurn(Number(row.id))
+        setDataSource(newData.filter((item) => item.key != row.key));
+      } else {
+        setDataSource(newData.filter((item) => item.key != row.key));
+      }
+      notify('success', 'Delete payroll turn success')
+    } catch (error) {
+      notify('error', 'Delete payroll turn failed')
     }
 
   }
 
   const handleAddRow = () => {
     const newRow: PayrollTurn = {
-      service_name: '',
+      service_name: '-',
       price: 0,
       employee_payroll_turn: Number(employee_id),
       key: dataSource.length
     };
     setDataSource([...dataSource, newRow]);
   };
+
 
   const handleUpdate = () => {
     console.log('====================================');
@@ -201,9 +209,10 @@ const PayrollTable: React.FC = () => {
     if (employeeDateTurn) {
       bulkUpdatePayrollTurn(employeeDateTurn, dataSource)
         .then((res) => {
-          console.log('====================================');
-          console.log('bulkUpdatePayrollTurn: ', res);
-          console.log('================================');
+          notify('success', 'Update payroll turn success')
+        })
+        .catch((error) => {
+          notify('error', 'Update payroll turn failed')
         })
     }
 
@@ -251,23 +260,36 @@ const PayrollTable: React.FC = () => {
     };
   });
 
-  useEffect(() => {
-    getEmployeePayrollDailyTurns({
-      employee: Number(employee_id),
-      date: turn_date || undefined
-    })
-      .then((res) => {
-        console.log('getEmployeeTurns: ', res);
-        setTotalTurnPrice(Number(res.total_price))
-        setEmployeeDateTurn(res)
-        let data = res?.payroll_turns?.map((item, index) => {
-          return {
-            ...item,
-            key: index
-          }
-        })
-        setDataSource(data || [])
+  const handleGetEmployeeDailyTurns = async () => {
+    try {
+      const params = {
+        employee: Number(employee_id),
+        date: turn_date || ''
+      }
+      let res = await getEmployeePayrollDailyTurns(params)
+      if (!res.id) {
+        res = await createEmployeePayrollTurnByDate(params)
+      }
+      setTotalTurnPrice(Number(res.total_price))
+      setEmployeeDateTurn(res)
+      let data = res?.payroll_turns?.map((item, index) => {
+        return {
+          ...item,
+          key: index,
+          service_name: item.service_name || '-',
+        }
       })
+      setDataSource(data || [])
+
+    } catch (error) {
+      console.log("errors:: ", error);
+
+    }
+
+  }
+
+  useEffect(() => {
+    handleGetEmployeeDailyTurns()
   }, [turn_date, employee_id])
 
 

@@ -2,6 +2,7 @@ import ECommerce from "@/components/Dashboard/E-commerce";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useEffect } from "react";
+import useNotification from "@/hooks/useNotification";
 
 // export const metadata: Metadata = {
 //   title:
@@ -10,7 +11,7 @@ import { useEffect } from "react";
 // };
 
 export default function Home() {
-
+  const {contextHolder,openNotificationWithIcon} = useNotification()
   return (
     <>
       <DefaultLayout>

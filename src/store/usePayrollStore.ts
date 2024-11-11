@@ -1,5 +1,5 @@
 import { employeeAPI } from '@/apis/employeeAPI';
-import { EmployeePayrollTurnRequestParams, EmployeeTurnRquestParams, payrollTurnAPI } from '@/apis/payrollTurnAPI';
+import { CreateEmployeePayrollTurnRequest, EmployeePayrollTurnRequestParams, EmployeeTurnRquestParams, payrollTurnAPI } from '@/apis/payrollTurnAPI';
 import { EmployeePayrollTurn, PayrollTurnResponse, PayrollTurn, EmployeePayrollTurnResponse } from '@/types/payroll';
 import { EmployeeType } from '@/types/user';
 import { create } from 'zustand';
@@ -15,6 +15,7 @@ export type PayrollStore = {
   deletePayrollTurn: (id: number) => Promise<any>;
   bulkUpdatePayrollTurn: (employeePayrollTurn: EmployeePayrollTurn, payrollTurn: PayrollTurn[]) => Promise<any>;
   getEmployeePayrollDailyTurns: (params: EmployeePayrollTurnRequestParams) => Promise<EmployeePayrollTurn>;
+  createEmployeePayrollTurnByDate: (params: CreateEmployeePayrollTurnRequest) => Promise<EmployeePayrollTurn>;
 };
 
 export const usePayrollStore = create<PayrollStore>((set) => ({
@@ -23,18 +24,15 @@ export const usePayrollStore = create<PayrollStore>((set) => ({
   employeePayrollTurns: [],
   getEmployeePayrollTurns: async (params) => {
     const data = await payrollTurnAPI.getEmployeePayrollTurn(params);
-    console.log('getEmployeePayrollTurns: ', data);
     set({ employeePayrollTurns: data.data });
     return data;
   },
   getEmployeePayrollDailyTurns: async (params) => {
     const data = await payrollTurnAPI.getEmployeePayrollDailyTurns(params);
-    console.log('getEmployeePayrollTurns: ', data);
     return data;
   },
   getEmployeeTurns: async (params) => {
     const data = await payrollTurnAPI.getEmployeeTurns(params);
-    console.log('getEmployeeTurns: ', data);
     return data;
   },
   deletePayrollTurn: async (id) => {
@@ -43,6 +41,10 @@ export const usePayrollStore = create<PayrollStore>((set) => ({
   },
   bulkUpdatePayrollTurn: async (empPayrollTurn, payrollTurn) => {
     const data = await payrollTurnAPI.bulkUpdatePayrollTurn(empPayrollTurn, payrollTurn);
+    return data;
+  },
+  createEmployeePayrollTurnByDate: async (params: CreateEmployeePayrollTurnRequest) => {
+    const data = await payrollTurnAPI.createEmployeePayrollTurnByDate(params);
     return data;
   }
 

@@ -39,6 +39,7 @@ const EmployeePage = () => {
     console.log('====================================');
     console.log('calendar change:: ', value);
     console.log('====================================');
+    setSelectDate(value);
   }
 
   const onCalendarSelect = (value: any) => {
@@ -92,7 +93,6 @@ const EmployeePage = () => {
       setEmployee(data);
     })
 
-    console.log('select year: ', selectDate.get('year'));
 
     getEmployeePayrollTurns({
       employee: Number(employee_id),
@@ -100,13 +100,11 @@ const EmployeePage = () => {
       month: Number(selectDate.get('month') + 1)
     }
     ).then((data) => {
-      console.log('getEmployeePayrollTurns: ', data);
       setTotalPrice(data.total_price);
     })
 
 
-
-  }, [])
+  }, [selectDate, employee_id])
   // const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
   //   if (info.type === 'month') return monthCellRender(current);
   //   return info.originNode;
@@ -121,6 +119,7 @@ const EmployeePage = () => {
         onChange={onCalendarChange}
         onSelect={onCalendarSelect}
         cellRender={dateCellRender}
+        value={selectDate}
       // value={dayjs(new Date())}
 
       />
