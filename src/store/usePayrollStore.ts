@@ -1,6 +1,6 @@
 import { employeeAPI } from '@/apis/employeeAPI';
-import { CreateEmployeePayrollTurnRequest, EmployeePayrollTurnRequestParams, EmployeeTurnRquestParams, payrollTurnAPI } from '@/apis/payrollTurnAPI';
-import { EmployeePayrollTurn, PayrollTurnResponse, PayrollTurn, EmployeePayrollTurnResponse } from '@/types/payroll';
+import { CreateEmployeePayrollTurnRequest, EmployeePayrollStatisticsRequest, EmployeePayrollTurnRequestParams, EmployeeTurnRquestParams, payrollTurnAPI } from '@/apis/payrollTurnAPI';
+import { EmployeePayrollTurn, PayrollTurnResponse, PayrollTurn, EmployeePayrollTurnResponse, EmployeePayrollStatisticsResponse } from '@/types/payroll';
 import { EmployeeType } from '@/types/user';
 import { create } from 'zustand';
 
@@ -16,6 +16,7 @@ export type PayrollStore = {
   bulkUpdatePayrollTurn: (employeePayrollTurn: EmployeePayrollTurn, payrollTurn: PayrollTurn[]) => Promise<any>;
   getEmployeePayrollDailyTurns: (params: EmployeePayrollTurnRequestParams) => Promise<EmployeePayrollTurn>;
   createEmployeePayrollTurnByDate: (params: CreateEmployeePayrollTurnRequest) => Promise<EmployeePayrollTurn>;
+  getEmployeePayrollStatistics: (params: EmployeePayrollStatisticsRequest) => Promise<EmployeePayrollStatisticsResponse>;
 };
 
 export const usePayrollStore = create<PayrollStore>((set) => ({
@@ -46,6 +47,10 @@ export const usePayrollStore = create<PayrollStore>((set) => ({
   createEmployeePayrollTurnByDate: async (params: CreateEmployeePayrollTurnRequest) => {
     const data = await payrollTurnAPI.createEmployeePayrollTurnByDate(params);
     return data;
-  }
+  },
+  getEmployeePayrollStatistics: async (params) => {
+    const data = await payrollTurnAPI.getEmployeePayrollStatistics(params);
+    return data;
+  },
 
 }));

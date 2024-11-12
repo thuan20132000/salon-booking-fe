@@ -23,6 +23,13 @@ export type EmployeePayrollTurn = {
   payroll_turns?: PayrollTurn[];
 };
 
+export type EmployeePayrollStatisticsResponse = {
+  data: EmployeePayrollTurn[];
+  date_range_after: string;
+  date_range_before: string;
+  total_price: number;
+};
+
 export type PayrollTurn = {
   id?: number;
   service_name: string;

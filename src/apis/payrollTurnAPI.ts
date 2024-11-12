@@ -1,6 +1,6 @@
 import { EmployeeType } from '@/types/user';
 import axiosInstance from './base';
-import { EmployeePayrollTurn, EmployeePayrollTurnResponse, PayrollTurn, PayrollTurnResponse } from '@/types/payroll';
+import { EmployeePayrollStatisticsResponse, EmployeePayrollTurn, EmployeePayrollTurnResponse, PayrollTurn, PayrollTurnResponse } from '@/types/payroll';
 
 export type EmployeePayrollTurnRequestParams = {
   employee?: number;
@@ -8,6 +8,13 @@ export type EmployeePayrollTurnRequestParams = {
   year?: number;
   month?: number;
 };
+
+export type EmployeePayrollStatisticsRequest = {
+  employee: number;
+  date_range_after?: string;
+  date_range_before?: string;
+};
+
 
 export type EmployeeTurnRquestParams = {
   employee: number;
@@ -82,11 +89,22 @@ const getEmployeePayrollDailyTurns = async (params: EmployeePayrollTurnRequestPa
   }
 }
 
+const getEmployeePayrollStatistics = async (params: EmployeePayrollStatisticsRequest): Promise<EmployeePayrollStatisticsResponse> => {
+  try {
+    const response = await axiosInstance.get('/employee-payroll-turn/statistics/', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+}
+
 export const payrollTurnAPI = {
   getEmployeePayrollTurn,
   getEmployeeTurns,
   deletePayrollTurn,
   bulkUpdatePayrollTurn,
   getEmployeePayrollDailyTurns,
-  createEmployeePayrollTurnByDate
+  createEmployeePayrollTurnByDate,
+  getEmployeePayrollStatistics
 };

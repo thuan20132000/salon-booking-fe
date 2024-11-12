@@ -10,7 +10,7 @@ import AddStaff from "@/components/Staff/AddStaff";
 import { Badge, Button, Calendar, CalendarProps, Statistic, Tag } from "antd";
 import type { Dayjs } from 'dayjs';
 import { useRouter, useSearchParams } from "next/navigation";
-import EmployeeListTable from "../components/EmployeeListTable";
+import EmployeeListTable from "../components/EmployeeSalaryListTable";
 import EmployeeStatistic from "../components/EmployeeStatistic";
 import { use, useEffect, useState } from "react";
 import { EmployeeStore, useEmployeeStore } from "@/store/useEmployeeStore";
@@ -137,7 +137,11 @@ const EmployeePage = () => {
   return (
     <DefaultLayout>
       <Breadcrumb pageName={employee?.name || ''} />
-      <EmployeeStatistic monthlyTotal={totalPrice} />
+      <EmployeeStatistic
+        monthlyTotal={totalPrice}
+        selectedDate={selectDate}
+        employeeId={employee_id}
+      />
       <Calendar
         onPanelChange={onPanelChange}
         onChange={onCalendarChange}

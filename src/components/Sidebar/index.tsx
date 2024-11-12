@@ -7,7 +7,7 @@ import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { CalendarFilled, CalendarOutlined, CalendarTwoTone, DashboardFilled, FileDoneOutlined, LoginOutlined, OrderedListOutlined, PieChartOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
+import { CalendarFilled, CalendarOutlined, CalendarTwoTone, DashboardFilled, FileDoneOutlined, LoginOutlined, OrderedListOutlined, PayCircleOutlined, PieChartOutlined, SettingOutlined, TeamOutlined, UserOutlined } from "@ant-design/icons";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -45,9 +45,9 @@ const menuGroups = [
         route: "/invoices",
       },
       {
-        icon: <FileDoneOutlined />,
-        label: "Payroll",
-        route: "/payroll",
+        icon: <PayCircleOutlined />,
+        label: "Salary",
+        route: "/salary",
       },
       {
         icon: <UserOutlined />,
