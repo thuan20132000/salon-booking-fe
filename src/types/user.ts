@@ -1,3 +1,4 @@
+import React from "react";
 
 export type UserType = {
   id: number;
@@ -26,6 +27,7 @@ export type UserLevelType = {
 };
 
 export type EmployeeType = {
+  key?: React.Key;
   id?: number;
   first_name?: string;
   last_name?: string;

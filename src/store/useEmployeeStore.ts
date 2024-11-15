@@ -10,14 +10,17 @@ export type EmployeeStore = {
   addEmployee: (employee: Omit<EmployeeType, 'id'>) => Promise<void>;
   removeEmployee: (id: number) => void;
   updateEmployee: (employee: EmployeeType) => Promise<EmployeeType>;
-  getEmployees: () => Promise<void>;
+  getEmployees: () => Promise<EmployeeType[]>;
   setEmployees: (employees: EmployeeType[]) => void;
   getEmployeeById: (id: number) => Promise<EmployeeType>;
+  selectedEmployees?: EmployeeType[];
+  setSelectedEmployees: (employees: EmployeeType[]) => void;
 };
 
 export const useEmployeeStore = create<EmployeeStore>((set) => ({
   employees: [],
   employee: undefined,
+  selectedEmployees: [],
   addEmployee: async (employee) => {
     const newEmployee = await employeeAPI.createEmployee(employee);
     set((state) => ({ employees: [...state.employees, newEmployee] }));
@@ -25,7 +28,7 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
   removeEmployee: (id) => set((state) => ({ employees: state.employees.filter(employee => employee.id !== id) })),
   updateEmployee: async (employee: EmployeeType): Promise<EmployeeType> => {
     // employees: state.employees.map(employee => employee.id === updatedEmployee.id ? updatedEmployee : employee)
-    if(!employee.id) {
+    if (!employee.id) {
       throw new Error('Employee id is required');
     }
 
@@ -34,10 +37,12 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
     return updatedEmployee
 
   },
-  getEmployees: async () => {
+  getEmployees: async (): Promise<EmployeeType[]> => {
     const data = await employeeAPI.getEmployees();
     console.log('getEmployees: ', data);
+
     set({ employees: data });
+    return data;
   },
   getEmployeeById: async (id: number): Promise<EmployeeType> => {
     const data = await employeeAPI.getEmployeeById(id);
@@ -46,4 +51,5 @@ export const useEmployeeStore = create<EmployeeStore>((set) => ({
     return data;
   },
   setEmployees: (employees: EmployeeType[]) => set({ employees }),
+  setSelectedEmployees: (employees) => set({ selectedEmployees: employees }),
 }));

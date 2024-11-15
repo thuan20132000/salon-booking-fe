@@ -51,3 +51,31 @@ export type EmployeePayrollTurnResponse = {
   data: EmployeePayrollTurn[];
   total_price: number;
 }
+
+
+export type PayslipType = {
+  id?: number;
+  pay_period_start?: string;
+  pay_period_end?: string;
+  gross_salary?: string;
+  net_salary?: string;
+  share?: string;
+  bonus?: string | null;
+  created_at?: Date;
+  updated_at?: Date;
+  employee?: EmployeeType;
+};
+
+export type IncomeType = {
+  employee_id?: string;
+  employee_name?: string;
+  total_income?: number;
+  total_deduction?: number;
+  net_pay?: number;
+  gross_pay?: number;
+  pay_period_start?: Date;
+  pay_period_end?: Date;
+  employee_commission_rate?: number;
+  total_tip?: number;
+}
+

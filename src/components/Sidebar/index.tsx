@@ -15,17 +15,17 @@ interface SidebarProps {
 }
 
 const menuGroups = [
-  {
-    name: "ANALYSIS",
-    menuItems: [
-      {
-        icon: <DashboardFilled />,
-        label: "Dashboard",
-        route: "/",
-      },
+  // {
+  //   name: "ANALYSIS",
+  //   menuItems: [
+  //     {
+  //       icon: <DashboardFilled />,
+  //       label: "Dashboard",
+  //       route: "/",
+  //     },
 
-    ]
-  },
+  //   ]
+  // },
   {
     name: "MANAGEMENT",
     menuItems: [
@@ -39,11 +39,11 @@ const menuGroups = [
         label: "Appointments",
         route: "/appointments",
       },
-      {
-        icon: <FileDoneOutlined />,
-        label: "Invoices",
-        route: "/invoices",
-      },
+      // {
+      //   icon: <FileDoneOutlined />,
+      //   label: "Invoices",
+      //   route: "/invoices",
+      // },
       {
         icon: <PayCircleOutlined />,
         label: "Salary",

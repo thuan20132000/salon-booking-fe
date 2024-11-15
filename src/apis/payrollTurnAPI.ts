@@ -1,6 +1,6 @@
 import { EmployeeType } from '@/types/user';
 import axiosInstance from './base';
-import { EmployeePayrollStatisticsResponse, EmployeePayrollTurn, EmployeePayrollTurnResponse, PayrollTurn, PayrollTurnResponse } from '@/types/payroll';
+import { EmployeePayrollStatisticsResponse, EmployeePayrollTurn, EmployeePayrollTurnResponse, IncomeType, PayrollTurn, PayrollTurnResponse } from '@/types/payroll';
 
 export type EmployeePayrollTurnRequestParams = {
   employee?: number;
@@ -98,6 +98,21 @@ const getEmployeePayrollStatistics = async (params: EmployeePayrollStatisticsReq
     throw error;
   }
 }
+export type EmployeeIncomeRequestParams = {
+  employee_ids?: string;
+  end_date?: string;
+  start_date?: string;
+};
+
+const getEmployeeIncome = async (params: EmployeeIncomeRequestParams): Promise<IncomeType[]> => {
+  try {
+    const response = await axiosInstance.get('/employee-payroll-turn/income/', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+}
 
 export const payrollTurnAPI = {
   getEmployeePayrollTurn,
@@ -106,5 +121,6 @@ export const payrollTurnAPI = {
   bulkUpdatePayrollTurn,
   getEmployeePayrollDailyTurns,
   createEmployeePayrollTurnByDate,
-  getEmployeePayrollStatistics
+  getEmployeePayrollStatistics,
+  getEmployeeIncome
 };

@@ -7,7 +7,7 @@ import TableTwo from "@/components/Tables/TableTwo";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import AddStaff from "@/components/Staff/AddStaff";
-import { Badge, Button, Calendar, CalendarProps, Statistic, Tag } from "antd";
+import { Badge, Button, Calendar, CalendarProps, Flex, Statistic, Tag } from "antd";
 import type { Dayjs } from 'dayjs';
 import { useRouter, useSearchParams } from "next/navigation";
 import EmployeeListTable from "../components/EmployeeSalaryListTable";
@@ -72,23 +72,34 @@ const EmployeePage = () => {
     }
 
     let payroll = getDatePayrollData(value);
-    // console.log('payroll: ', payroll);
 
     return (
-      <ul className="events">
-        {/* <Button onClick={() => onDateClick(value)}>  </Button> */}
-        {
-          payroll ? (
-            <Tag color="blue" onClick={() => onDateClick(value)}>
-              <Statistic
-                value={payroll?.total_price}
-                valueStyle={{ fontSize: 16 }}
-              />
-            </Tag>
-          ) :
-            <PlusCircleOutlined onClick={() => onDateClick(value)} />
-        }
-      </ul>
+      <Flex className="events">
+        <Flex>
+          {
+            payroll ? (
+              <>
+                <Tag color="blue" onClick={() => onDateClick(value)}>
+                  <Statistic
+                    value={payroll?.total_price}
+                    valueStyle={{ fontSize: 16 }}
+                    prefix="$"
+                  />
+
+                </Tag>
+                {/* <Tag color="yellow" onClick={() => onDateClick(value)}>
+                  <Statistic
+                    value={payroll?.payroll_turns?.length}
+                    valueStyle={{ fontSize: 16 }}
+                  />
+                </Tag> */}
+              </>
+            ) :
+              <PlusCircleOutlined onClick={() => onDateClick(value)} />
+          }
+
+        </Flex>
+      </Flex>
     );
   };
 

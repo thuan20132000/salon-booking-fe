@@ -1,18 +1,23 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Space, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
-import { DeleteOutlined, EditOutlined, PayCircleOutlined } from '@ant-design/icons';
+import { CalendarFilled, DeleteOutlined, EditOutlined, PayCircleOutlined } from '@ant-design/icons';
 import { EmployeeStore, useEmployeeStore } from '@/store/useEmployeeStore';
 import { EmployeeType } from '@/types/user';
-import AddEmployee from './AddEmployee';
-import { EMPLOYEES } from '@/dummy';
 import { useRouter } from 'next/navigation';
 
+type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
 const EmployeeSalaryListTable: React.FC = () => {
-  const { employees, getEmployees, setEmployees } = useEmployeeStore((state: EmployeeStore) => state);
+  const {
+    employees,
+    getEmployees,
+    setEmployees,
+    setSelectedEmployees,
+    selectedEmployees
+  } = useEmployeeStore((state: EmployeeStore) => state);
   const router = useRouter();
 
   const showEmployeeSalary = (employee: EmployeeType) => {
@@ -28,12 +33,12 @@ const EmployeeSalaryListTable: React.FC = () => {
   }
 
   const columns: TableProps<EmployeeType>['columns'] = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      render: (text) => <a>{text}</a>,
-    },
+    // {
+    //   title: 'ID',
+    //   dataIndex: 'id',
+    //   key: 'id',
+    //   render: (text) => <a>{text}</a>,
+    // },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -63,7 +68,7 @@ const EmployeeSalaryListTable: React.FC = () => {
         return (
           <Space size="middle">
             {/* <Button icon={<EditOutlined />} onClick={() => showEmployeeDetail(record)} /> */}
-            <Button icon={<PayCircleOutlined />} onClick={() => showEmployeeSalary(record)} />
+            <Button icon={<CalendarFilled />} onClick={() => showEmployeeSalary(record)} />
             {/* <Button icon={<DeleteOutlined />} /> */}
           </Space>
         )
@@ -72,15 +77,35 @@ const EmployeeSalaryListTable: React.FC = () => {
     },
   ];
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const onSelectChange = (newSelectedRowKeys: React.Key[], data: EmployeeType[]) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedEmployees(data);
+  };
+
+  const rowSelection: TableRowSelection<EmployeeType> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
 
   useEffect(() => {
     getEmployees();
     // setEmployees(EMPLOYEES)
   }, [])
 
+  const dataSource = employees.map<EmployeeType>((_, i) => ({
+    ..._,
+    key: i,
+  }));
+
   return (
     <>
-      <Table columns={columns} dataSource={employees} />
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        rowSelection={rowSelection}
+      />
     </>
   )
 };
