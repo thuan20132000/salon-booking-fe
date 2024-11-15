@@ -1,8 +1,11 @@
+'use client';
 import ECommerce from "@/components/Dashboard/E-commerce";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useNotification from "@/hooks/useNotification";
+import SignIn from "./auth/signin/page";
+import EmployeePage from "./employees/page";
 
 // export const metadata: Metadata = {
 //   title:
@@ -11,11 +14,12 @@ import useNotification from "@/hooks/useNotification";
 // };
 
 export default function Home() {
-  const {contextHolder,openNotificationWithIcon} = useNotification()
+
+ 
   return (
     <>
       <DefaultLayout>
-        <ECommerce />
+        <ECommerce/>
       </DefaultLayout>
     </>
   );

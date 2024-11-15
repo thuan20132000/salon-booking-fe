@@ -10,9 +10,9 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Add authorization token to headers if available
-    // const token = localStorage.getItem('token');
-    const token = true;
-
+    const token = localStorage.getItem('token');
+    // let token = "";
+    // token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMxNjM5NzEzLCJpYXQiOjE3MzE2Mzk0MTMsImp0aSI6IjRhNmJhOGQzNGZmMjRmMDlhYzA5NzMzOWQ0YjZmNTY1IiwidXNlcl9pZCI6M30.FzmxeXzRMSKV1PT5DPdWVNsKXPggnZC_1GyKccDhTyE"
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }

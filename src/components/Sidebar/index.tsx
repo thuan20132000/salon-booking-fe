@@ -103,15 +103,15 @@ const menuGroups = [
       //     { label: "Buttons", route: "/ui/buttons" },
       //   ],
       // },
-      {
-        icon: <LoginOutlined />,
-        label: "Authentication",
-        route: "#",
-        children: [
-          { label: "Sign In", route: "/auth/signin" },
-          { label: "Sign Up", route: "/auth/signup" },
-        ],
-      },
+      // {
+      //   icon: <LoginOutlined />,
+      //   label: "Authentication",
+      //   route: "#",
+      //   children: [
+      //     { label: "Sign In", route: "/auth/signin" },
+      //     { label: "Sign Up", route: "/auth/signup" },
+      //   ],
+      // },
     ],
   },
 ];
