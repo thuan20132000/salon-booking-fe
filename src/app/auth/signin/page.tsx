@@ -1,7 +1,9 @@
-'use client'
+import type { FormProps } from 'antd';
 import React from 'react';
-import { Layout, Menu, theme, Form, Checkbox, Button, Input } from 'antd';
-import useAuthenticationStore, { AuthenticationState } from '@/store/useAuthenticationStore';
+import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { Layout, Menu, theme, Form, Checkbox, Button, Input, InputNumber } from 'antd';
+import useAuthenticationStore from '@/store/useAuthenticationStore';
+import { AuthenticationState } from '../../../store/useAuthenticationStore';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -9,6 +11,7 @@ type FieldType = {
   username?: string;
   password?: string;
   remember?: string;
+  phonenumber?: string;
 };
 
 
@@ -20,6 +23,18 @@ const Signin: React.FC = () => {
     logout,
     user
   } = useAuthenticationStore((AuthenticationState: AuthenticationState) => AuthenticationState);
+
+  // const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+  //   console.log('Success:', values);
+  //   login({
+  //     username: values?.username || '',
+  //     password: values?.password || ''
+  //   });
+  // };
+
+  // const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
+  //   console.log('Failed:', errorInfo);
+  // };
 
   return (
     <div>
@@ -50,7 +65,6 @@ const Signin: React.FC = () => {
                 >
                   <Input defaultValue={'customer'} />
                 </Form.Item>
-
                 <Form.Item<FieldType>
                   label="Password"
                   name="password"
@@ -58,7 +72,17 @@ const Signin: React.FC = () => {
                 >
                   <Input.Password defaultValue={'Matkhau@123'} />
                 </Form.Item>
-
+                <Form.Item<FieldType>
+                  label="phonenumber"
+                  name="phonenumber"
+                  rules={[{ required: true, message: 'Please input your password!' }]}
+                >
+                  <InputNumber<number>
+                    defaultValue={1000}
+                    formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
+                  />
+                </Form.Item>
                 <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>
