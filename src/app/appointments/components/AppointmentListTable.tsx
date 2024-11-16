@@ -23,9 +23,9 @@ const columns: TableProps<AppointmentType>['columns'] = [
     key: 'services',
     render: (_, { services }) => (
       <>
-        {services?.map(({ name, id }) => (
+        {services?.map(({ id, service }) => (
           <Tag color='blue' key={id} className='mb-1'>
-            {name} {id}
+            {id} {service?.name}
           </Tag>
         ))}
       </>
@@ -40,7 +40,7 @@ const columns: TableProps<AppointmentType>['columns'] = [
     title: 'Employees',
     key: 'employees',
     dataIndex: 'employees',
-    render: (_, { employee }) => <Tag>{employee?.username}</Tag>,
+    render: (_, employee) => <Tag>{employee?.name}</Tag>,
 
   },
   {

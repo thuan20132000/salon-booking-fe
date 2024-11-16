@@ -1,9 +1,7 @@
-import type { FormProps } from 'antd';
+'use client'
 import React from 'react';
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme, Form, Checkbox, Button, Input } from 'antd';
-import useAuthenticationStore from '@/store/useAuthenticationStore';
-import { AuthenticationState } from '../../../store/useAuthenticationStore';
+import useAuthenticationStore, { AuthenticationState } from '@/store/useAuthenticationStore';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -16,25 +14,12 @@ type FieldType = {
 
 
 const Signin: React.FC = () => {
-  const form = Form.useForm();
   const {
     isAuthenticated,
     login,
     logout,
     user
-  } = useAuthenticationStore((AuthenticationState) => AuthenticationState);
-
-  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-    console.log('Success:', values);
-    login({
-      username: values?.username || '',
-      password: values?.password || ''
-    });
-  };
-
-  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
+  } = useAuthenticationStore((AuthenticationState: AuthenticationState) => AuthenticationState);
 
   return (
     <div>
@@ -55,15 +40,13 @@ const Signin: React.FC = () => {
                 wrapperCol={{ span: 16 }}
                 style={{ maxWidth: 600 }}
                 initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
                 autoComplete="off"
               >
                 <Form.Item<FieldType>
                   label="Username"
                   name="username"
                   rules={[{ required: true, message: 'Please input your username!' }]}
-                  
+
                 >
                   <Input defaultValue={'customer'} />
                 </Form.Item>

@@ -73,7 +73,9 @@ const UpdateServiceDrawer = (props: Props) => {
 
       <Flex wrap className='mt-4 mb-4' gap={8}>
         {serviceCategories?.map(category => (
-          <Button className={
+          <Button 
+            key={category.id}
+            className={
             `border-cyan-300 ${category == selectedCategory ? 'bg-sky-500' : ''}`}
             onClick={() => onSelectCategory(category)}
           >
@@ -86,6 +88,7 @@ const UpdateServiceDrawer = (props: Props) => {
         {
           services.map(service => (
             <Flex
+              key={service.id}
               className={`flex-1 border-l-8 border-l-sky-400 p-4 shadow-6 rounded-md justify-between ${service == selectedService ? 'bg-sky-400' : ''}`}
               onClick={() => onSelectService(service)}
 
