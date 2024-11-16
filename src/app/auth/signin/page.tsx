@@ -16,6 +16,7 @@ type FieldType = {
 
 
 const Signin: React.FC = () => {
+  const form = Form.useForm();
   const {
     isAuthenticated,
     login,
@@ -62,8 +63,9 @@ const Signin: React.FC = () => {
                   label="Username"
                   name="username"
                   rules={[{ required: true, message: 'Please input your username!' }]}
+                  
                 >
-                  <Input />
+                  <Input defaultValue={'customer'} />
                 </Form.Item>
 
                 <Form.Item<FieldType>
@@ -71,7 +73,7 @@ const Signin: React.FC = () => {
                   name="password"
                   rules={[{ required: true, message: 'Please input your password!' }]}
                 >
-                  <Input.Password />
+                  <Input.Password defaultValue={'Matkhau@123'} />
                 </Form.Item>
 
                 <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}>
