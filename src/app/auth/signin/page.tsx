@@ -1,3 +1,4 @@
+'use client';
 import type { FormProps } from 'antd';
 import React from 'react';
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
@@ -24,17 +25,7 @@ const Signin: React.FC = () => {
     user
   } = useAuthenticationStore((AuthenticationState: AuthenticationState) => AuthenticationState);
 
-  // const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
-  //   console.log('Success:', values);
-  //   login({
-  //     username: values?.username || '',
-  //     password: values?.password || ''
-  //   });
-  // };
 
-  // const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
-  //   console.log('Failed:', errorInfo);
-  // };
 
   return (
     <div>
