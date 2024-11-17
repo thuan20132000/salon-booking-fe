@@ -11,8 +11,11 @@ export type loginType = {
 export interface AuthenticationState {
   isAuthenticated: boolean;
   user: string | null;
-  login: (user: loginType) => void;
+  login: (user: loginType) => Promise<any>;
   logout: () => void;
+  isAuthenticating?: boolean;
+  setIsAuthenticating: (isAuthenticating: boolean) => void;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 
@@ -26,6 +29,9 @@ const useAuthenticationStore = create<AuthenticationState>((set) => ({
     return res;
   },
   logout: () => set({ isAuthenticated: false, user: null }),
+  isAuthenticating: false,
+  setIsAuthenticating: (isAuthenticating) => set({ isAuthenticating }),
+  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
 }));
 
 export default useAuthenticationStore;
