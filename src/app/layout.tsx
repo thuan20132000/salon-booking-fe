@@ -16,7 +16,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated } = useAuthenticationStore((AuthenticationState) => AuthenticationState);
+  const { isAuthenticated } = useAuthenticationStore((state: AuthenticationState) => state);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -24,32 +24,31 @@ export default function RootLayout({
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
+
   }, []);
 
+  console.log('isAuthenticated', isAuthenticated);
+  
 
-
-  if (!isAuthenticated) {
-    return (
-      <ConfigProvider theme={theme}>
-        <html lang="en">
-          <body suppressHydrationWarning={true}>
-            <div className="dark:bg-boxdark-2 dark:text-bodydark">
-              {loading && <Loader />}
-              <Signin />
-            </div>
-          </body>
-        </html>
-      </ConfigProvider>
-
-    );
-  }
 
   return (
     <ConfigProvider theme={theme}>
       <html lang="en">
         <body suppressHydrationWarning={true}>
           <div className="dark:bg-boxdark-2 dark:text-bodydark">
-            {loading ? <Loader /> : children}
+            {
+              !isAuthenticated && (
+                <div className="flex flex-col h-screen">
+                  <Signin/>
+                </div>
+              )
+            }
+
+            {isAuthenticated && (
+              <div className="flex flex-col h-screen">
+                {children}
+              </div>
+            )}
           </div>
         </body>
       </html>

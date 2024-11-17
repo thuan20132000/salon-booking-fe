@@ -2,9 +2,10 @@
 import type { FormProps } from 'antd';
 import React from 'react';
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Layout, Menu, theme, Form, Checkbox, Button, Input, InputNumber } from 'antd';
+import { Layout, Menu, theme, Form, Checkbox, Button, Input } from 'antd';
 import useAuthenticationStore from '@/store/useAuthenticationStore';
 import { AuthenticationState } from '../../../store/useAuthenticationStore';
+import { useRouter } from 'next/navigation';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -12,20 +13,31 @@ type FieldType = {
   username?: string;
   password?: string;
   remember?: string;
-  phonenumber?: string;
 };
 
 
 
 const Signin: React.FC = () => {
+  const router = useRouter();
   const {
     isAuthenticated,
     login,
     logout,
-    user
-  } = useAuthenticationStore((AuthenticationState: AuthenticationState) => AuthenticationState);
+    user,
+  } = useAuthenticationStore((AuthenticationState) => AuthenticationState);
 
+  const onFinish: FormProps<FieldType>['onFinish'] = (values) => {
+    login({
+      username: values?.username || '',
+      password: values?.password || ''
+    });
+    router.refresh();
+    console.log('Success:', values);
+  };
 
+  const onFinishFailed: FormProps<FieldType>['onFinishFailed'] = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+  };
 
   return (
     <div>
@@ -46,6 +58,8 @@ const Signin: React.FC = () => {
                 wrapperCol={{ span: 16 }}
                 style={{ maxWidth: 600 }}
                 initialValues={{ remember: true }}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
                 autoComplete="off"
               >
                 <Form.Item<FieldType>
@@ -56,6 +70,7 @@ const Signin: React.FC = () => {
                 >
                   <Input defaultValue={'customer'} />
                 </Form.Item>
+
                 <Form.Item<FieldType>
                   label="Password"
                   name="password"
@@ -63,17 +78,7 @@ const Signin: React.FC = () => {
                 >
                   <Input.Password defaultValue={'Matkhau@123'} />
                 </Form.Item>
-                <Form.Item<FieldType>
-                  label="phonenumber"
-                  name="phonenumber"
-                  rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                  <InputNumber<number>
-                    defaultValue={1000}
-                    formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, '') as unknown as number}
-                  />
-                </Form.Item>
+
                 <Form.Item<FieldType> name="remember" valuePropName="checked" label={null}>
                   <Checkbox>Remember me</Checkbox>
                 </Form.Item>

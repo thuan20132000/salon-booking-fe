@@ -23,6 +23,7 @@ const useAuthenticationStore = create<AuthenticationState>((set) => ({
     const res = await authenticationAPI.login(user);
     localStorage.setItem('token', res.access);
     set({ isAuthenticated: true, user: user.username });
+    return res;
   },
   logout: () => set({ isAuthenticated: false, user: null }),
 }));
