@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-  baseURL: 'http://3.17.232.108:8000/salon/api', // Replace with your API base URL
+  baseURL: 'https://nailsalon.thuandev.site/salon/api', // Replace with your API base URL
   timeout: 10000, // Set a timeout for requests
 });
 
