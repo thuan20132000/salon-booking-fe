@@ -12,6 +12,7 @@
     "@ant-design/cssinjs": "^1.21.0",
     "@ant-design/icons": "^5.4.0",
     "@ant-design/nextjs-registry": "^1.0.1",
+    "@daypilot/daypilot-lite-react": "^3.30.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
@@ -28,12 +29,14 @@
     "next": "^14.2.4",
     "react": "^18",
     "react-apexcharts": "^1.4.1",
+    "react-big-calendar": "^1.15.0",
     "react-dom": "^18",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-big-calendar": "^1.15.0",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",

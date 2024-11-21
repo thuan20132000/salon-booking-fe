@@ -36,13 +36,13 @@ export default function RootLayout({
       <html lang="en">
         <body suppressHydrationWarning={true}>
           <div className="dark:bg-boxdark-2 dark:text-bodydark">
-            {
+            {/* {
               !isAuthenticated && (
                 <div className="flex flex-col h-screen">
                   <Signin/>
                 </div>
               )
-            }
+            } */}
 
             {isAuthenticated && (
               <div className="flex flex-col h-screen">

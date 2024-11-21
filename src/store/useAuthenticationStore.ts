@@ -20,7 +20,7 @@ export interface AuthenticationState {
 
 
 const useAuthenticationStore = create<AuthenticationState>((set) => ({
-  isAuthenticated: false,
+  isAuthenticated: true,
   user: null,
   login: async (user: loginType) => {
     const res = await authenticationAPI.login(user);
