@@ -18,7 +18,7 @@ import useAppointmentStore, { AppointmentStore } from '@/store/useAppointmentSto
 
 
 
-const MyCalendar = (props: any) => {
+const ResourceCalendar = (props: any) => {
   const { isShowAddAppointment, setShowAddAppointment, appointment } = useAppointmentStore((state: AppointmentStore) => state);
   const [view, setView] = useState("Day");
   const [startDate, setStartDate] = useState(DayPilot.Date.today());
@@ -165,27 +165,32 @@ const MyCalendar = (props: any) => {
     <div >
       <div className={"navigator"}>
         <Flex className='pb-4 bg-inherit'>
+          <Flex flex={1}>
+            <Flex className='mr-8'>
+              <Button onClick={() => setStartDate(DayPilot.Date.today())}>Today</Button>
+            </Flex>
 
-          <Flex className='mr-8'>
-            <Button onClick={() => setStartDate(DayPilot.Date.today())}>Today</Button>
+            {/* previous date */}
+            <Flex className='mr-0'>
+              <Button onClick={() => setStartDate(startDate.addDays(-1))}>Previous</Button>
+            </Flex>
+            <Flex className='ml-2 mr-2'>
+              <DatePicker
+                onChange={onChange}
+                value={dayjs(startDate.toString())}
+              />
+            </Flex>
+            {/* next date */}
+            <Flex className='mr-0'>
+              <Button onClick={() => setStartDate(startDate.addDays(1))}>Next</Button>
+
+            </Flex>
+
           </Flex>
 
-          {/* previous date */}
-          <Flex className='mr-0'>
-            <Button onClick={() => setStartDate(startDate.addDays(-1))}>Previous</Button>
+          <Flex flex={1}>
+            <AddAppointment />
           </Flex>
-          <Flex className='ml-2 mr-2'>
-            <DatePicker
-              onChange={onChange}
-              value={dayjs(startDate.toString())}
-            />
-          </Flex>
-          {/* next date */}
-          <Flex className='mr-0'>
-            <Button onClick={() => setStartDate(startDate.addDays(1))}>Next</Button>
-
-          </Flex>
-
         </Flex>
 
       </div>
@@ -225,7 +230,6 @@ const MyCalendar = (props: any) => {
         }
 
       />
-      <AddAppointment />
     </div>
 
   )
@@ -233,4 +237,4 @@ const MyCalendar = (props: any) => {
 }
 
 
-export default MyCalendar
+export default ResourceCalendar

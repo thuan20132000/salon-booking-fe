@@ -38,7 +38,7 @@ const Signin: React.FC = () => {
         username: values?.username || '',
         password: values?.password || ''
       });
-      router.refresh();
+      // router.refresh();
       console.log('Success:', values);
 
     } catch (error) {

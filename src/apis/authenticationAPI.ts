@@ -1,3 +1,4 @@
+import { UserType } from '@/types/user';
 import axiosInstance from './base';
 
 
@@ -9,6 +10,7 @@ export type loginType = {
 export type loginResponseType = {
   access: string;
   refresh: string;
+  user: UserType
 };
 
 const login = async (user: loginType): Promise<loginResponseType> => {

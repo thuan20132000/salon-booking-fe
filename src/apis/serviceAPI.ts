@@ -1,6 +1,8 @@
 
 import { NailServiceCategoryType, NailServiceType } from '@/types/service';
 import axiosInstance from './base';
+import { SalonCategoryServiceResponseDataType } from './serviceAPIResource';
+
 
 const getServices = async (): Promise<NailServiceType[]> => {
   try {
@@ -61,11 +63,22 @@ const getServiceCategories = async (): Promise<NailServiceCategoryType[]> => {
   }
 }
 
+const getSalonCategoryServices = async (salon_id: number): Promise<SalonCategoryServiceResponseDataType[]> => {
+  try {
+    const response = await axiosInstance.get(`/salons/${salon_id}/nail-service-categories/`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching salon category services:`, error);
+    throw error;
+  }
+}
+
 export const serviceAPI = {
   getServices,
   getServiceById,
   createService,
   updateService,
   deleteService,
-  getServiceCategories
+  getServiceCategories,
+  getSalonCategoryServices
 };

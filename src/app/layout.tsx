@@ -10,16 +10,17 @@ import theme from '../theme/themeConfig';
 import Signin from "./auth/signin/page";
 import useAuthenticationStore from "@/store/useAuthenticationStore";
 import { AuthenticationState } from '../store/useAuthenticationStore';
+import { useRouter } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated } = useAuthenticationStore((state: AuthenticationState) => state);
+  const { isAuthenticated, checkAuth } = useAuthenticationStore((state: AuthenticationState) => state);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const router = useRouter();
   // const pathname = usePathname();
 
   useEffect(() => {
@@ -27,8 +28,18 @@ export default function RootLayout({
 
   }, []);
 
-  console.log('isAuthenticated', isAuthenticated);
-  
+  useEffect(() => {
+    console.log('====================================');
+    console.log('isAuthenticated:: ', isAuthenticated);
+    console.log('====================================');
+    const isAuth = checkAuth()
+    if (!isAuth) {
+      router.replace('/auth/signin');
+    } else {
+      router.replace('/');
+    }
+
+  }, [isAuthenticated])
 
 
   return (
@@ -36,13 +47,13 @@ export default function RootLayout({
       <html lang="en">
         <body suppressHydrationWarning={true}>
           <div className="dark:bg-boxdark-2 dark:text-bodydark">
-            {/* {
+            {
               !isAuthenticated && (
                 <div className="flex flex-col h-screen">
-                  <Signin/>
+                  <Signin />
                 </div>
               )
-            } */}
+            }
 
             {isAuthenticated && (
               <div className="flex flex-col h-screen">

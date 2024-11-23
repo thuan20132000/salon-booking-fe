@@ -10,6 +10,8 @@ export type NailServiceType = {
   updated_at?: string;
   category?: NailServiceCategoryType;
   is_selected?: boolean;
+  category_id?: number;
+  salon?: number;
 };
 
 export type NailServiceCategoryType = {
@@ -18,4 +20,9 @@ export type NailServiceCategoryType = {
   description?: string;
   is_online_booking?: boolean;
   is_check_in?: boolean;
+  salon?: number;
+  nail_services?: NailServiceType[];
+  is_visible?: boolean;
 };
+
+
