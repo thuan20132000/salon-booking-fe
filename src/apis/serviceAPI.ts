@@ -73,6 +73,52 @@ const getSalonCategoryServices = async (salon_id: number): Promise<SalonCategory
   }
 }
 
+export type createSalonCategoryInputType = {
+  salon_id: number;
+  name: string;
+  description?: string;
+}
+
+const createSalonCategory = async (input: createSalonCategoryInputType): Promise<SalonCategoryServiceResponseDataType> => {
+  try {
+    const response = await axiosInstance.post(`/salons/${input.salon_id}/nail-service-category/`, input);
+    return response.data;
+  } catch (error) {
+    console.error(`Error creating salon category:`, error);
+    throw error;
+  }
+}
+
+export type deleteSalonCategoryInputType = {
+  id: number;
+  salon_id: number;
+}
+const deleteSalonCategory = async (input: deleteSalonCategoryInputType): Promise<void> => {
+  try {
+    await axiosInstance.delete(`/salons/${input.salon_id}/nail-service-category/${input.id}/delete/`);
+  } catch (error) {
+    console.error(`Error deleting salon category with id ${input.id}:`, error);
+    throw error;
+  }
+}
+
+export type updateSalonCategoryInputType = {
+  id: number;
+  name: string;
+  description?: string;
+  salon_id: number;
+}
+
+const updateSalonCategory = async (input: updateSalonCategoryInputType): Promise<SalonCategoryServiceResponseDataType> => {
+  try {
+    const response = await axiosInstance.put(`/salons/${input.salon_id}/nail-service-category/${input.id}/update/`, input);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating salon category with id ${input.id}:`, error);
+    throw error;
+  }
+}
+
 export const serviceAPI = {
   getServices,
   getServiceById,
@@ -80,5 +126,8 @@ export const serviceAPI = {
   updateService,
   deleteService,
   getServiceCategories,
-  getSalonCategoryServices
+  getSalonCategoryServices,
+  createSalonCategory,
+  deleteSalonCategory,
+  updateSalonCategory
 };

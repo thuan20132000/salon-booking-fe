@@ -1,5 +1,5 @@
 
-import { serviceAPI } from '@/apis/serviceAPI';
+import { createSalonCategoryInputType, deleteSalonCategoryInputType, serviceAPI, updateSalonCategoryInputType } from '@/apis/serviceAPI';
 import { AppointmentServiceType } from '@/types/appointment';
 import { NailServiceCategoryType, NailServiceType } from '@/types/service';
 import { create } from 'zustand';
@@ -23,6 +23,11 @@ export type ServiceStore = {
   salonCategories: NailServiceCategoryType[];
   getSalonCategoryServices: (salon_id: number) => Promise<void>;
   handleVisibleCategory: (category_id: number) => void;
+  createSalonCategory?: (input: createSalonCategoryInputType) => Promise<void>;
+  deleteSalonCategory?: (input: deleteSalonCategoryInputType) => Promise<void>;
+  isLoading?: boolean;
+  setIsLoading?: (isLoading: boolean) => void;
+  updateSalonCategory?: (input: updateSalonCategoryInputType) => Promise<void>;
 };
 
 
@@ -30,6 +35,7 @@ export const useServiceStore = create<ServiceStore>((set) => ({
   services: [],
   salonCategories: [],
   serviceCategories: [],
+  isLoading: false,
   addService: (service) => set((state) => ({ services: [...state.services, service] })),
   removeService: (id) => set((state) => ({ services: state.services.filter(service => service.id !== id) })),
   updateService: (updatedService) => set((state) => ({
@@ -64,19 +70,63 @@ export const useServiceStore = create<ServiceStore>((set) => ({
     set((state) => {
       return {
         salonCategories: state.salonCategories.map((category) => {
-          if(category_id == 0){
+          if (category_id == 0) {
             category.is_visible = true;
             return category;
           }
 
           if (category.id != category_id) {
             category.is_visible = false;
-          }else{
+          } else {
             category.is_visible = true;
           }
           return category;
         })
       }
     })
-  }
+  },
+  createSalonCategory: async (input) => {
+    const data = await serviceAPI.createSalonCategory(input);
+    set((state) => {
+      return {
+        salonCategories: [...state.salonCategories, data]
+      }
+    })
+  },
+  deleteSalonCategory: async (input: deleteSalonCategoryInputType) => {
+    try {
+      set({ isLoading: true });
+      await serviceAPI.deleteSalonCategory(input);
+      set((state) => {
+        return {
+          salonCategories: state.salonCategories.filter((category) => category.id !== input.id)
+        }
+      })
+
+    } catch (error) {
+
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateSalonCategory: async (input: updateSalonCategoryInputType) => {
+    try {
+      set({ isLoading: true });
+      const data = await serviceAPI.updateSalonCategory(input);
+      set((state) => {
+        return {
+          salonCategories: state.salonCategories.map((category) => {
+            if (category.id === data.id) {
+              return data;
+            }
+            return category;
+          })
+        }
+      })
+    } catch (error) {
+
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));
