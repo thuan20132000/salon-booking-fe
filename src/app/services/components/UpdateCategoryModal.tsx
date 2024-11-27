@@ -47,13 +47,13 @@ const UpdateCategoryModal: React.FC<Props> = (props) => {
 
 
   useEffect(() => {
-    if(props.category){
+    if (props.category) {
       form.setFieldsValue({
         name: props.category.name,
         description: props.category.description
       })
     }
-  }, [props.category])
+  }, [props.category, form])
 
   return (
     <>

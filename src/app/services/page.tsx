@@ -43,7 +43,7 @@ const ServicePage = () => {
   return (
     <DefaultLayout>
       <Spin spinning={isLoading} fullscreen/>
-      <Breadcrumb pageName="Services" />
+      <Breadcrumb pageName="Catalog" />
       <Row>
         <Col span={6} >
           <div>

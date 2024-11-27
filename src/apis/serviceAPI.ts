@@ -119,6 +119,52 @@ const updateSalonCategory = async (input: updateSalonCategoryInputType): Promise
   }
 }
 
+const deleteSalonService = async (salon_id: number, service_id: number): Promise<void> => {
+  try {
+    await axiosInstance.delete(`/salons/${salon_id}/nail-service/${service_id}/delete/`);
+  } catch (error) {
+    console.error(`Error deleting salon service with id ${service_id}:`, error);
+    throw error;
+  }
+}
+
+export type addSalonServiceInputType = {
+  salon_id: number;
+  category: number;
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+}
+const addSalonService = async (input: addSalonServiceInputType): Promise<NailServiceType> => {
+  try {
+    const res = await axiosInstance.post(`/salons/${input.salon_id}/nail-service/`, input);
+    return res.data;
+  } catch (error) {
+    console.error(`Error adding salon service with id ${input.salon_id}:`, error);
+    throw error;
+  }
+}
+
+export type updateSalonServiceInputType = {
+  salon_id: number;
+  service_id: number;
+  name: string;
+  description: string;
+  price: number;
+  duration: number;
+}
+
+const updateSalonService = async (input: updateSalonServiceInputType): Promise<NailServiceType> => {
+  try {
+    const res = await axiosInstance.put(`/salons/${input.salon_id}/nail-service/${input.service_id}/update/`, input);
+    return res.data;
+  } catch (error) {
+    console.error(`Error updating salon service with id ${input.service_id}:`, error);
+    throw error;
+  }
+}
+
 export const serviceAPI = {
   getServices,
   getServiceById,
@@ -129,5 +175,8 @@ export const serviceAPI = {
   getSalonCategoryServices,
   createSalonCategory,
   deleteSalonCategory,
-  updateSalonCategory
+  updateSalonCategory,
+  deleteSalonService,
+  addSalonService,
+  updateSalonService
 };

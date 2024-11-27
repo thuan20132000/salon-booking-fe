@@ -1,5 +1,5 @@
 
-import { createSalonCategoryInputType, deleteSalonCategoryInputType, serviceAPI, updateSalonCategoryInputType } from '@/apis/serviceAPI';
+import { addSalonServiceInputType, createSalonCategoryInputType, deleteSalonCategoryInputType, serviceAPI, updateSalonCategoryInputType, updateSalonServiceInputType } from '@/apis/serviceAPI';
 import { AppointmentServiceType } from '@/types/appointment';
 import { NailServiceCategoryType, NailServiceType } from '@/types/service';
 import { create } from 'zustand';
@@ -28,6 +28,9 @@ export type ServiceStore = {
   isLoading?: boolean;
   setIsLoading?: (isLoading: boolean) => void;
   updateSalonCategory?: (input: updateSalonCategoryInputType) => Promise<void>;
+  deleteSalonService?: (salon_id: number, service_id: number) => Promise<void>;
+  addSalonService?: (input: addSalonServiceInputType) => Promise<void>;
+  updateSalonService?: (input: updateSalonServiceInputType) => Promise<void>;
 };
 
 
@@ -129,4 +132,81 @@ export const useServiceStore = create<ServiceStore>((set) => ({
       set({ isLoading: false });
     }
   },
+  deleteSalonService: async (salon_id: number, service_id: number) => {
+    try {
+      set({ isLoading: true });
+      await serviceAPI.deleteSalonService(salon_id, service_id);
+      set((state) => {
+        return {
+          salonCategories: state.salonCategories.map((category) => {
+            return {
+              ...category,
+              nail_services: category.nail_services?.filter((service) => service.id !== service_id)
+            }
+          })
+        }
+      })
+    } catch (error) {
+
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  addSalonService: async (input) => {
+    try {
+      set({ isLoading: true });
+      const res = await serviceAPI.addSalonService(input);
+      console.log('addSalonService: ', res);
+
+      set((state) => {
+        return {
+          salonCategories: state.salonCategories.map((category) => {
+            if (category.id === input.category) {
+              return {
+                ...category,
+                nail_services: [...category?.nail_services || [], {
+                  id: res.id,
+                  name: input.name,
+                  description: input.description,
+                  price: input.price,
+                  duration: input.duration
+                }]
+              }
+            }
+            return category;
+          })
+        }
+      })
+    } catch (error) {
+
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  updateSalonService: async (input) => {
+    try {
+      set({ isLoading: true });
+      const res = await serviceAPI.updateSalonService(input);
+      set((state) => {
+        return {
+          salonCategories: state.salonCategories.map((category) => {
+            return {
+              ...category,
+              nail_services: category.nail_services?.map((service) => {
+                if (service.id === res.id) {
+                  return res;
+                }
+                return service;
+              })
+            }
+          })
+        }
+      })
+    } catch (error) {
+
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
 }));
