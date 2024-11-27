@@ -49,6 +49,7 @@ export type EmployeeType = {
   updated_at?: string;
   employee_note?: string;
   description?: string;
+  commission_rate?: number;
 };
 
 export type CustomerType = UserType & {

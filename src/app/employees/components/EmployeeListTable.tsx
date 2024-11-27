@@ -1,18 +1,23 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Button, Space, Table, Tag } from 'antd';
+import { Button, Popconfirm, Space, Table, Tag } from 'antd';
 import type { TableProps } from 'antd';
-import { DeleteOutlined, EditOutlined, PayCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PayCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { EmployeeStore, useEmployeeStore } from '@/store/useEmployeeStore';
 import { EmployeeType } from '@/types/user';
 import AddEmployee from './AddEmployee';
 import { EMPLOYEES } from '@/dummy';
 import { useRouter } from 'next/navigation';
+import UpdateEmployeeDrawer from './UpdateEmployeeDrawer';
+import useAuthenticationStore, { AuthenticationState } from '@/store/useAuthenticationStore';
 
 
 const EmployeeListTable: React.FC = () => {
-  const { employees, getEmployees, setEmployees } = useEmployeeStore((state: EmployeeStore) => state);
+  const { employees, getEmployees, setEmployees, deleteSalonEmployee } = useEmployeeStore((state: EmployeeStore) => state);
+  const {
+    user
+  } = useAuthenticationStore((state: AuthenticationState) => state);
   const router = useRouter();
 
   const showEmployeeSalary = (employee: EmployeeType) => {
@@ -25,6 +30,11 @@ const EmployeeListTable: React.FC = () => {
     console.log('showEmployeeDetail: ', employee);
     router.push(`/employees/detail?employee_id=${employee.id}`);
 
+  }
+
+  const onDeleteSalonEmployee = async (employee: EmployeeType) => {
+    console.log('onDeleteSalonEmployee: ', employee);
+    await deleteSalonEmployee({ salon_id: Number(user?.id), employee_id: Number(employee.id) });
   }
 
   const columns: TableProps<EmployeeType>['columns'] = [
@@ -62,9 +72,20 @@ const EmployeeListTable: React.FC = () => {
       render: (_, record) => {
         return (
           <Space size="middle">
-            <Button icon={<EditOutlined />} onClick={() => showEmployeeDetail(record)} />
+            {/* <Button icon={<EditOutlined />} onClick={() => showEmployeeDetail(record)} /> */}
             <Button icon={<PayCircleOutlined />} onClick={() => showEmployeeSalary(record)} />
-            <Button icon={<DeleteOutlined />} />
+            <Popconfirm
+              title="Delete employee"
+              icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+              onConfirm={() => onDeleteSalonEmployee(record)}
+              okText="Yes"
+              okButtonProps={{ danger: true }}
+            >
+              <Button icon={<DeleteOutlined />} />
+            </Popconfirm>
+            <UpdateEmployeeDrawer
+              employee={record}
+            />
           </Space>
         )
       }
@@ -75,15 +96,21 @@ const EmployeeListTable: React.FC = () => {
 
   useEffect(() => {
     getEmployees();
-    // setEmployees(EMPLOYEES)
   }, [])
+
+
 
   return (
     <>
       <Space className='flex justify-end'  >
         <AddEmployee />
       </Space>
-      <Table columns={columns} dataSource={employees} />
+      <Table
+        columns={columns}
+        dataSource={employees}
+        rowKey='id'
+
+      />
     </>
   )
 };

@@ -51,7 +51,7 @@ const menuGroups = [
       },
       {
         icon: <UserOutlined />,
-        label: "Employees",
+        label: "Teams",
         route: "/employees",
       },
       {

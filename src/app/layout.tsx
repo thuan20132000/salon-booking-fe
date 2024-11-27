@@ -29,9 +29,6 @@ export default function RootLayout({
   }, []);
 
   useEffect(() => {
-    console.log('====================================');
-    console.log('isAuthenticated:: ', isAuthenticated);
-    console.log('====================================');
     const isAuth = checkAuth()
     if (!isAuth) {
       router.replace('/auth/signin');

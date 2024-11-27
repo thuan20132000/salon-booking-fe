@@ -1,27 +1,35 @@
 'use client';
 import { NailServiceType } from '@/types/service';
-import { PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Cascader, Col, DatePicker, Drawer, DrawerProps, Form, Input, InputNumber, RadioChangeEvent, Row, Select, Space } from 'antd';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 const { Option } = Select;
 import type { ConfigProviderProps, SelectProps } from 'antd';
 import { EmployeeType } from '@/types/user';
-import { addSalonEmployeeInputType, employeeAPI } from '@/apis/employeeAPI';
+import { addSalonEmployeeInputType, employeeAPI, updateSalonEmployeeInputType } from '@/apis/employeeAPI';
 import { EmployeeStore, useEmployeeStore } from '@/store/useEmployeeStore';
+import useAuthenticationStore, { AuthenticationState } from '@/store/useAuthenticationStore';
 type SizeType = ConfigProviderProps['componentSize'];
 
-type Props = {}
+type Props = {
+  // isShow: boolean;
+  // onClose: () => void;
+  employee: EmployeeType;
+}
 
-const AddEmployee = (props: Props) => {
+const UpdateEmployeeDrawer = (props: Props) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [placement, setPlacement] = useState<DrawerProps['placement']>('right');
   const [service, setService] = useState<NailServiceType>();
   const [size, setSize] = useState<SizeType>('middle');
-  const { getEmployees, addEmployee, isLoading,
-    addSalonEmployee
+  const {
+    updateSalonEmployee,
+    getEmployees
   } = useEmployeeStore((state: EmployeeStore) => state);
-
+  const {
+    user
+  } = useAuthenticationStore((state:AuthenticationState) => state);
   const showDrawer = () => {
     setOpen(true);
   };
@@ -38,21 +46,6 @@ const AddEmployee = (props: Props) => {
     setOpen(false);
   }
 
-
-  const onSubmit = async () => {
-    console.log('onSubmit');
-    const values: EmployeeType = await form.validateFields()
-    console.log('values: ', values);
-    // form.resetFields();
-    await addEmployee(values)
-    form.resetFields();
-    setOpen(false);
-    await getEmployees();
-
-
-  }
-
-
   const handleFinish = async () => {
 
     try {
@@ -60,8 +53,8 @@ const AddEmployee = (props: Props) => {
 
       const values = await form.validateFields();
 
-      const inputData: addSalonEmployeeInputType = {
-        salon_id: 1,
+      const inputData: updateSalonEmployeeInputType = {
+        salon_id: Number(user?.id),
         employee: {
           name: values.name,
           nickname: values.nickname,
@@ -70,17 +63,17 @@ const AddEmployee = (props: Props) => {
           address: values.address,
           birth_date: values.birthday,
           commission_rate: values.commision_rate
-        }
+        },
+        employee_id: Number(props.employee?.id)
       }
 
 
-      if (addSalonEmployee) {
-        await addSalonEmployee(inputData);
+      if (updateSalonEmployee) {
+        await updateSalonEmployee(inputData);
       }
-
+      await getEmployees();
       form.resetFields();
       closeDrawer()
-
     } catch (error) {
       console.log('====================================');
       console.log('error:: ', error);
@@ -91,14 +84,28 @@ const AddEmployee = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (props.employee) {
+      form.setFieldsValue({
+        name: props.employee.name,
+        nickname: props.employee.nickname,
+        email: props.employee.email,
+        phone_number: props.employee.phone_number,
+        address: props.employee.address,
+        birthday: props.employee.birth_date,
+        commision_rate: props.employee.commission_rate
+      })
+    }
+
+  }, [props.employee, form])
+
 
   return (
-    <div style={{ marginBottom: 20, alignSelf: 'flex-end' }}>
-      <Button onClick={showDrawer} icon={<PlusOutlined />}>
-        Add Team Member
+    <>
+      <Button onClick={showDrawer} icon={<EditOutlined />}>
       </Button>
       <Drawer
-        title="Add new team member"
+        title="Edit team member"
         width={720}
         onClose={onClose}
         open={open}
@@ -209,8 +216,8 @@ const AddEmployee = (props: Props) => {
       </Drawer>
 
 
-    </div >
+    </ >
   )
 }
 
-export default AddEmployee
+export default UpdateEmployeeDrawer
