@@ -39,11 +39,11 @@ const menuGroups = [
         label: "Appointments",
         route: "/appointments",
       },
-      {
-        icon: <FileDoneOutlined />,
-        label: "Catalog",
-        route: "/services",
-      },
+      // {
+      //   icon: <FileDoneOutlined />,
+      //   label: "Catalog",
+      //   route: "/services",
+      // },
       {
         icon: <PayCircleOutlined />,
         label: "Salary",
