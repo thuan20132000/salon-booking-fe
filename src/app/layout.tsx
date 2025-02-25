@@ -36,7 +36,7 @@ export default function RootLayout({
       router.replace('/');
     }
 
-  }, [isAuthenticated])
+  }, [isAuthenticated, router, checkAuth])
 
 
   return (
