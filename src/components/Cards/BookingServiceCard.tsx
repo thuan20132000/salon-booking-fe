@@ -4,8 +4,9 @@ import { ClockCircleOutlined, HourglassOutlined, DollarOutlined, UserOutlined } 
 import { formatPrice, formatDuration, formatTime } from '@/utils/helpers';
 import SelectTechnicianDrawer from '@/components/Drawers/SelectTechnicianDrawer';
 import SelectDateTimeDrawer from '@/components/Drawers/SelectDateTimeDrawer';
-import { Technician } from '@/interfaces/salon';
+import { Service, Technician } from '@/interfaces/salon';
 import dayjs, { Dayjs } from 'dayjs';
+import SelectBookingServiceDrawer from '../Drawers/SelectBookingServiceDrawer';
 const { Text, Title } = Typography;
 
 interface BookingServiceCardProps {
@@ -30,6 +31,7 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   const [isShowSelectDateTime, setIsShowSelectDateTime] = useState<boolean>(false);
   const [selectedTechnician, setSelectedTechnician] = useState<Technician | null>(technician);
   const [selectedDateTime, setSelectedDateTime] = useState<Dayjs | null>(null);
+  const [isShowSalonServices, setIsShowSalonServices] = useState<boolean>(false);
 
   const handleSelectTechnician = (technician: Technician) => {
     console.log('technician:: ', technician);
@@ -53,23 +55,36 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
     setIsShowSelectDateTime(false);
   }
 
+  const handleSelectBookingService = (service: Service) => {
+    console.log('service:: ', service);
+    setIsShowSalonServices(false);
+  }
+
+  const handleCancelSelectBookingService = () => {
+    setIsShowSalonServices(false);
+  }
+
   useEffect(() => {
-    setSelectedDateTime(initialDateTime);
+    if (initialDateTime) {
+      setSelectedDateTime(initialDateTime);
+    }
   }, [initialDateTime]);
 
   return (
     <Card
       hoverable
-      onClick={onClick}
       style={{ width: '100%', marginBottom: 16, padding: 0 }}
+      onClick={(e) => {
+        onClick?.();
+      }}
     >
       <Space direction="vertical" size="small" style={{ width: '100%' }}>
         <Space size="large" style={{ width: '100%', }}>
-          <Space onClick={() => setIsShowSelectTechnician(true)}>
-            <Space>
+          <Space>
+            <Space onClick={() => setIsShowSalonServices(true)}>
               <Text type="secondary">{service.name}</Text>
             </Space>
-            <Space>
+            <Space onClick={() => setIsShowSelectTechnician(true)}>
               <Avatar
                 icon={<UserOutlined />}
                 src={selectedTechnician?.avatar}
@@ -108,6 +123,11 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
         onClose={handleCancelSelectDateTime}
         onSelect={handleSelectDateTime}
       />
+      <SelectBookingServiceDrawer
+        open={isShowSalonServices} 
+        onClose={handleCancelSelectBookingService}
+        onSelectService={handleSelectBookingService}
+      />  
     </Card>
   );
 };

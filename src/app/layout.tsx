@@ -30,6 +30,7 @@ export default function RootLayout({
 
   useEffect(() => {
     const isAuth = checkAuth()
+    console.log(isAuth)
     if (!isAuth) {
       router.replace('/auth/signin');
     } else {
@@ -44,19 +45,19 @@ export default function RootLayout({
       <html lang="en">
         <body suppressHydrationWarning={true}>
           <div className="dark:bg-boxdark-2 dark:text-bodydark">
-            {
+            {/* {
               !isAuthenticated && (
                 <div className="flex flex-col h-screen">
                   <Signin />
                 </div>
               )
-            }
+            } */}
 
-            {isAuthenticated && (
+            {/* {isAuthenticated && ( */}
               <div className="flex flex-col h-screen">
                 {children}
               </div>
-            )}
+            {/* )} */}
           </div>
         </body>
       </html>

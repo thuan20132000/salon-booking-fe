@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, DatePicker, Button } from 'antd';
 import type { FormInstance } from 'antd/es/form';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
 import BookingServiceCard from '../Cards/BookingServiceCard';
 import { DayPilot } from '@daypilot/daypilot-lite-react';
+import { PlusOutlined } from '@ant-design/icons';
+import SelectBookingServiceDrawer from '../Drawers/SelectBookingServiceDrawer';
+import { BookingService, Service } from '@/interfaces/salon';
 
 interface AddBookingEventModalProps {
   open: boolean;
@@ -18,7 +21,7 @@ interface BookingEventData {
   dateRange: [string, string];
   description?: string;
   eventData: DayPilot.EventData | null;
-} 
+}
 
 const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
   open,
@@ -27,28 +30,57 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
   eventData,
 }) => {
   const [form] = Form.useForm();
+  const [isShowSelectBookingService, setIsShowSelectBookingService] = useState<boolean>(false);
+  const [bookingServices, setBookingServices] = useState<BookingService[]>([]);
 
-  const handleSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      const formattedData: BookingEventData = {
-        title: values.title,
-        dateRange: [
-          values.dateRange[0].format('YYYY-MM-DD HH:mm:ss'),
-          values.dateRange[1].format('YYYY-MM-DD HH:mm:ss'),
-        ],
-        description: values.description,
-        eventData: eventData,
-      };
-      onSubmit(formattedData);
-      form.resetFields();
-      onCancel();
-    } catch (error) {
-      console.error('Validation failed:', error);
-    }
-  };
+  const handleSelectBookingService = (service: Service) => {
+    console.log('service:: ', service);
+    setIsShowSelectBookingService(false);
+    setBookingServices([...bookingServices, {
+      service: service,
+      technician: {
+        id: '1',
+        name: 'Ethan',
+        avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Heart_coraz%C3%B3n.svg/1200px-Heart_coraz%C3%B3n.svg.png',
+      },
+      datetime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      price: service.price,
+      duration: service.duration,
+    }]);
+  }
 
+  const showSelectBookingServiceModal = () => {
+    setIsShowSelectBookingService(true);
+  }
+
+  const handleCancelSelectBookingService = () => {
+    setIsShowSelectBookingService(false);
+  }
   
+
+  useEffect(() => {
+    const initialBookingServices = [
+      {
+        service: {
+          id: 1,
+          name: 'Manicure',
+          price: 100,
+          duration: 60,
+        },
+        technician: {
+          id: '1',
+          name: 'Ethan',
+          avatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Heart_coraz%C3%B3n.svg/1200px-Heart_coraz%C3%B3n.svg.png',
+        },
+        datetime: '2025-01-01 10:00:00',
+        price: 100,
+        duration: 60,
+      },
+    ];
+    setBookingServices(initialBookingServices);
+  }, []);
+
+
   return (
     <Modal
       title="Add New Booking"
@@ -58,8 +90,8 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
         <Button key="cancel" onClick={onCancel}>
           Cancel
         </Button>,
-        <Button key="submit" type="primary" onClick={handleSubmit}>
-          Add Booking
+        <Button key="submit" type="default" >
+          Save Appointment
         </Button>,
       ]}
     >
@@ -72,7 +104,7 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
         }}
       >
 
-        <BookingServiceCard
+        {/* <BookingServiceCard
           service={{
             name: 'Pedicure with shellac',
             duration: 60,
@@ -85,11 +117,31 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
           }}
           initialDateTime={dayjs(eventData?.start?.toString())}
           onClick={() => { }}
-        />
-
-        <Form.Item name="description" label="Description">
+        /> */}
+        {bookingServices.map((bookingService) => (
+          <BookingServiceCard
+            key={bookingService.service.id}
+            service={bookingService.service}
+            technician={bookingService.technician}
+            initialDateTime={dayjs(bookingService.datetime)}
+            onClick={() => { }}
+          />
+        ))} 
+        <Button
+          type="dashed"
+          onClick={showSelectBookingServiceModal}
+          icon={<PlusOutlined />}
+        >
+          Add Service
+        </Button>
+        {/* <Form.Item name="description" label="Description">
           <Input.TextArea rows={4} />
-        </Form.Item>
+        </Form.Item> */}
+        <SelectBookingServiceDrawer
+          open={isShowSelectBookingService}
+          onClose={handleCancelSelectBookingService}
+          onSelectService={handleSelectBookingService}
+        />
       </Form>
     </Modal>
   );
