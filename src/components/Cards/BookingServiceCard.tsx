@@ -1,40 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Space, Tag, Avatar } from 'antd';
-import { ClockCircleOutlined, HourglassOutlined, DollarOutlined, UserOutlined } from '@ant-design/icons';
+import { Card, Typography, Space, Tag, Avatar, Button, Input, Select } from 'antd';
+import { ClockCircleOutlined, HourglassOutlined, DollarOutlined, UserOutlined, DeleteOutlined, DownOutlined, HeartOutlined, HeartFilled } from '@ant-design/icons';
 import { formatPrice, formatDuration, formatTime } from '@/utils/helpers';
 import SelectTechnicianDrawer from '@/components/Drawers/SelectTechnicianDrawer';
 import SelectDateTimeDrawer from '@/components/Drawers/SelectDateTimeDrawer';
-import { Service, Technician } from '@/interfaces/salon';
+import { Service, Technician, BookingService, Booking } from '@/interfaces/salon';
 import dayjs, { Dayjs } from 'dayjs';
 import SelectBookingServiceDrawer from '../Drawers/SelectBookingServiceDrawer';
+import SelectBookingTimeDrawer from '../Drawers/SelectBookingTimeDrawer';
+import { SelectDurationDrawer } from '../Drawers/SelectDurationDrawer';
+import SelectServicePriceDrawer from '../Drawers/SelectServicePriceDrawer';
 const { Text, Title } = Typography;
 
 interface BookingServiceCardProps {
-  service: {
-    name: string;
-    description?: string;
-    duration: number; // in minutes
-    price: number;
-  };
-  technician: Technician;
+  technician: Technician | null;
   initialDateTime: Dayjs; // ISO string
   onClick?: () => void;
+  onRemove?: () => void;
+  bookingService: BookingService;
+  booking: Booking;
+  onUpdateBookingService?: (bookingService: BookingService) => void;
 }
 
 const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
-  service,
   technician,
   initialDateTime,
   onClick,
+  onRemove,
+  onUpdateBookingService,
+  bookingService,
+  booking,
 }) => {
   const [isShowSelectTechnician, setIsShowSelectTechnician] = useState<boolean>(false);
-  const [isShowSelectDateTime, setIsShowSelectDateTime] = useState<boolean>(false);
   const [selectedTechnician, setSelectedTechnician] = useState<Technician | null>(technician);
-  const [selectedDateTime, setSelectedDateTime] = useState<Dayjs | null>(null);
   const [isShowSalonServices, setIsShowSalonServices] = useState<boolean>(false);
+  const [isHover, setIsHover] = useState<boolean>(false);
+  const [isShowSelectBookingTime, setIsShowSelectBookingTime] = useState<boolean>(false);
+  const [isShowSelectDuration, setIsShowSelectDuration] = useState<boolean>(false);
+  const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
+  const [isShowSelectServicePrice, setIsShowSelectServicePrice] = useState<boolean>(false);
+  const [selectedServicePrice, setSelectedServicePrice] = useState<number | null>(null);
+  
+  const handleSelectServicePrice = (price: number) => {
+    setSelectedServicePrice(price);
+    setIsShowSelectServicePrice(false);
+  }
+
+  const handleCancelSelectServicePrice = () => {
+    setSelectedServicePrice(null);
+    setIsShowSelectServicePrice(false);
+  }
+
+  const handleSelectDuration = (duration: number) => {
+    setSelectedDuration(duration);
+    setIsShowSelectDuration(false);
+  }
+
+  const handleCancelSelectDuration = () => {
+    setSelectedDuration(null);
+    setIsShowSelectDuration(false);
+  }
 
   const handleSelectTechnician = (technician: Technician) => {
-    console.log('technician:: ', technician);
     setSelectedTechnician(technician);
     setIsShowSelectTechnician(false);
   }
@@ -44,19 +71,29 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
     setIsShowSelectTechnician(false);
   }
 
-  const handleSelectDateTime = (date: Dayjs) => {
-    console.log('change date:: ', date);
-    setSelectedDateTime(date);
-    setIsShowSelectDateTime(false);
+  const handleSelectBookingTime = (datetime: Dayjs) => {
+
+    let startAt = datetime.format('YYYY-MM-DD HH:mm:ss');
+    let endAt = datetime.add(bookingService.service?.duration ?? 0, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+    // return
+    let updatedBookingService = { 
+      ...bookingService, 
+      start_at: startAt,
+      end_at: endAt
+    };
+    onUpdateBookingService?.(updatedBookingService);
+    setIsShowSelectBookingTime(false);
   }
 
-  const handleCancelSelectDateTime = () => {
+  const handleCancelSelectBookingTime = () => {
     // setSelectedDateTime(null);
-    setIsShowSelectDateTime(false);
+    setIsShowSelectBookingTime(false);
   }
 
   const handleSelectBookingService = (service: Service) => {
-    console.log('service:: ', service);
+    let updatedBookingService = { ...bookingService, service: service };
+
+    onUpdateBookingService?.(updatedBookingService);
     setIsShowSalonServices(false);
   }
 
@@ -66,68 +103,131 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
 
   useEffect(() => {
     if (initialDateTime) {
-      setSelectedDateTime(initialDateTime);
+      // setSelectedDateTime(initialDateTime.format('HH:mm'));
     }
   }, [initialDateTime]);
+
+  const handleToggleRequested = () => {
+    let updatedBookingService = { ...bookingService, is_requested: !bookingService.is_requested };
+    onUpdateBookingService?.(updatedBookingService);
+  }
+
 
   return (
     <Card
       hoverable
-      style={{ width: '100%', marginBottom: 16, padding: 0 }}
+      style={{ width: '100%', marginBottom: 6, padding: 0, position: 'relative' }}
       onClick={(e) => {
         onClick?.();
       }}
+      onMouseEnter={() => {
+        setIsHover(true);
+      }}
+      onMouseLeave={() => {
+        setIsHover(false);
+      }}
+
     >
+      {
+        isHover && (
+          <Button
+            type="text"
+            icon={<DeleteOutlined style={{ fontSize: 16, color: 'red' }} />}
+            className='float-right absolute bottom-0 right-0 p-0 m-0 bg-transparent'
+            style={{ border: 'none', position: 'absolute', bottom: 0, right: 0 }}
+            onClick={onRemove}
+          />
+        )
+      }
       <Space direction="vertical" size="small" style={{ width: '100%' }}>
         <Space size="large" style={{ width: '100%', }}>
           <Space>
-            <Space onClick={() => setIsShowSalonServices(true)}>
-              <Text type="secondary">{service.name}</Text>
-            </Space>
-            <Space onClick={() => setIsShowSelectTechnician(true)}>
-              <Avatar
-                icon={<UserOutlined />}
-                src={selectedTechnician?.avatar}
-                alt={selectedTechnician?.name}
-              />
-              <Text>{selectedTechnician?.name}</Text>
-            </Space>
+            <Input
+              size="small"
+              placeholder="service"
+              onClick={() => setIsShowSalonServices(true)}
+              value={bookingService.service?.name}
+              suffix={<DownOutlined
+                style={{ fontSize: 12, color: 'gray' }}
+                onClick={() => setIsShowSalonServices(true)}
+              />}
+            />
+            <Input
+              size="small"
+              placeholder="technician"
+              onClick={() => setIsShowSelectTechnician(true)}
+              value={selectedTechnician?.name}
+              prefix={<UserOutlined />}
+              prefixCls="custom-prefix"
+              suffix={
+                <>
+                  {
+                    bookingService.is_requested ? (
+                      <HeartFilled
+                        style={{ fontSize: 14, color: 'red' }}
+                        onClick={handleToggleRequested}
+                      />
+                    ) : (
+                      <HeartOutlined
+                        style={{ fontSize: 14, color: 'gray' }}
+                        onClick={handleToggleRequested}
+                      />
+                    )
+                  }
+                  <DownOutlined
+                    style={{ fontSize: 12, color: 'gray' }}
+                    onClick={() => setIsShowSelectTechnician(true)}
+                  />
+                </>
+              }
+            />
           </Space>
         </Space>
         <Space
         >
           <Tag icon={<ClockCircleOutlined />} color="blue"
-            onClick={() => setIsShowSelectDateTime(true)}
+            onClick={() => setIsShowSelectBookingTime(true)}
           >
-            {selectedDateTime?.format('HH:mm')}
+            {dayjs(bookingService.start_at).format('HH:mm')}
           </Tag>
           <Tag icon={<HourglassOutlined />} color="blue"
-            onClick={() => setIsShowSelectDateTime(true)}
+            onClick={() => setIsShowSelectDuration(true)}
           >
-            {formatDuration(service.duration)}
+            {selectedDuration ? formatDuration(selectedDuration) : formatDuration(bookingService.service?.duration)}
           </Tag>
-          <Tag icon={<DollarOutlined />} color="green">
-            {formatPrice(service.price)}
+          <Tag icon={<DollarOutlined />} color="green"
+            onClick={() => setIsShowSelectServicePrice(true)}
+          >
+            {selectedServicePrice ? formatPrice(selectedServicePrice) : formatPrice(bookingService.service?.price)}
           </Tag>
-
         </Space>
-
       </Space>
       <SelectTechnicianDrawer
         open={isShowSelectTechnician}
         onClose={handleCancelSelectTechnician}
         onSelect={handleSelectTechnician}
       />
-      <SelectDateTimeDrawer
-        open={isShowSelectDateTime}
-        onClose={handleCancelSelectDateTime}
-        onSelect={handleSelectDateTime}
+      <SelectBookingTimeDrawer
+        open={isShowSelectBookingTime}
+        onClose={handleCancelSelectBookingTime}
+        onSelectTime={handleSelectBookingTime}
+        booking={booking}
       />
       <SelectBookingServiceDrawer
-        open={isShowSalonServices} 
+        open={isShowSalonServices}
         onClose={handleCancelSelectBookingService}
         onSelectService={handleSelectBookingService}
-      />  
+      />
+      <SelectDurationDrawer
+        open={isShowSelectDuration}
+        onClose={handleCancelSelectDuration}
+        onSelect={handleSelectDuration}
+      /> 
+      <SelectServicePriceDrawer
+        open={isShowSelectServicePrice}
+        onClose={handleCancelSelectServicePrice}
+        onSubmit={handleSelectServicePrice}
+      /> 
     </Card>
   );
 };

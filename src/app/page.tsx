@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import useNotification from "@/hooks/useNotification";
 import SignIn from "./auth/signin/page";
 import EmployeePage from "./employees/page";
+import ResourceCalendar from "./calendar/components/ResourceCalendar";
 
 // export const metadata: Metadata = {
 //   title:
@@ -19,7 +20,7 @@ export default function Home() {
   return (
     <>
       <DefaultLayout>
-        <ECommerce/>
+        <ResourceCalendar />
       </DefaultLayout>
     </>
   );

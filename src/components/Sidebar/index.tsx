@@ -34,36 +34,36 @@ const menuGroups = [
         label: "Calendar",
         route: "/calendar",
       },
-      {
-        icon: <CalendarFilled />,
-        label: "Appointments",
-        route: "/appointments",
-      },
+      // {
+      //   icon: <CalendarFilled />,
+      //   label: "Appointments",
+      //   route: "/appointments",
+      // },
       // {
       //   icon: <FileDoneOutlined />,
       //   label: "Catalog",
       //   route: "/services",
       // },
-      {
-        icon: <PayCircleOutlined />,
-        label: "Salary",
-        route: "/salary",
-      },
-      {
-        icon: <UserOutlined />,
-        label: "Teams",
-        route: "/employees",
-      },
-      {
-        icon: <OrderedListOutlined />,
-        label: "Services",
-        route: "/services",
-      },
-      {
-        icon: <SettingOutlined />,
-        label: "Settings",
-        route: "/settings",
-      },
+      // {
+      //   icon: <PayCircleOutlined />,
+      //   label: "Salary",
+      //   route: "/salary",
+      // },
+      // {
+      //   icon: <UserOutlined />,
+      //   label: "Teams",
+      //   route: "/employees",
+      // },
+      // {
+      //   icon: <OrderedListOutlined />,
+      //   label: "Services",
+      //   route: "/services",
+      // },
+      // {
+      //   icon: <SettingOutlined />,
+      //   label: "Settings",
+      //   route: "/settings",
+      // },
       // {
       //   icon: <TeamOutlined />,
       //   label: "Profile",

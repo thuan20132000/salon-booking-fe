@@ -16,12 +16,14 @@ import dayjs from 'dayjs';
 import AddAppointment from '@/app/appointments/components/AddAppointment';
 import useAppointmentStore, { AppointmentStore } from '@/store/useAppointmentStore';
 import AddBookingEventModal from '@/components/Modals/AddBookingEventModal';
-
+import { BookingServiceStore, useBookingServiceStore } from '@/store/useBookingServiceStore';
 
 
 const ResourceCalendar = (props: any) => {
-  const { isShowAddAppointment, setShowAddAppointment, appointment } = useAppointmentStore((state: AppointmentStore) => state);
+  const {
+    calendarBookingEvents,
 
+  } = useBookingServiceStore((state: BookingServiceStore) => state);
 
   const [isShowAddBookingEvent, setIsShowAddBookingEvent] = useState<boolean>(false);
   const [view, setView] = useState("Day");
@@ -29,29 +31,13 @@ const ResourceCalendar = (props: any) => {
   const [events, setEvents] = useState<DayPilot.EventData[]>([]);
 
   const [technicianColumns, setTechnicianColumns] = useState<DayPilot.CalendarColumnData[]>([]);
-  const [bookingEvents, setBookingEvents] = useState<DayPilot.EventData[]>([]);
+  // const [bookingEvents, setBookingEvents] = useState<DayPilot.EventData[]>([]);
 
   const [selectedEvent, setSelectedEvent] = useState<DayPilot.EventData | null>(null);
 
   const onTimeRangeSelected = async (args: any) => {
-    // const dp = args.control;
-    // const modal = await DayPilot.Modal.prompt("Create a new event:", "Event 1");
-    // dp.clearSelection();
-    // if (modal.canceled) {
-    //   return;
-    // }
-    // const e = {
-    //   start: args.start,
-    //   end: args.end,
-    //   text: modal.result,
-    //   resource: args.resource,
-    // };
-    // setEvents([...events, e]);
-    // console.log('selected time range:: ', args);
-
     setSelectedEvent(args);
     setIsShowAddBookingEvent(true);
-
   };
 
   useEffect(() => {
@@ -111,74 +97,10 @@ const ResourceCalendar = (props: any) => {
         borderColor: "darker",
         resource: "B"
       },
-      {
-        id: 9,
-        text: "Event 9",
-        start: DayPilot.Date.today().addHours(13),
-        end: DayPilot.Date.today().addHours(15),
-        backColor: "#76a5af", // Teal background
-        borderColor: "darker",
-        resource: "B"
-      },
-      {
-        id: 3,
-        text: "Event 3",
-        start: DayPilot.Date.today().addHours(9),
-        end: DayPilot.Date.today().addHours(11),
-        backColor: "#ffd966", // Yellow background
-        borderColor: "darker",
-        resource: "A",
-
-      },
-      {
-        id: 4,
-        text: "Event 4",
-        start: DayPilot.Date.today().addHours(9),
-        end: DayPilot.Date.today().addHours(11),
-        backColor: "#f6b26b", // Orange background
-        borderColor: "darker",
-        resource: "A"
-      },
-
-      {
-        id: 7,
-        text: "Event 7",
-        start: DayPilot.Date.today().addDays(1).addHours(14),
-        end: DayPilot.Date.today().addDays(1).addHours(16),
-        backColor: "#e691b8", // Pink background
-        borderColor: "darker"
-      },
-      {
-        id: 5,
-        text: "Event 5",
-        start: DayPilot.Date.today().addDays(4).addHours(9),
-        end: DayPilot.Date.today().addDays(4).addHours(11),
-        backColor: "#8e7cc3", // Purple background
-        borderColor: "darker"
-      },
-      {
-        id: 6,
-        text: "Event 6",
-        start: DayPilot.Date.today().addDays(4).addHours(13),
-        end: DayPilot.Date.today().addDays(4).addHours(15),
-        backColor: "#6fa8dc", // Light Blue background
-        borderColor: "darker",
-        resource: "C"
-      },
-
-      {
-        id: 8,
-        text: "Event 8",
-        start: DayPilot.Date.today().addDays(5).addHours(13),
-        end: DayPilot.Date.today().addDays(5).addHours(15),
-        backColor: "#b6d7a8", // Light Green background
-        borderColor: "darker",
-        resource: "D"
-      },
 
     ];
 
-    setBookingEvents(data);
+    // setBookingEvents(data);
 
     const initialTechnicianColumns: DayPilot.CalendarColumnData[] = [
       { name: "Ethan", id: "A" },
@@ -199,6 +121,8 @@ const ResourceCalendar = (props: any) => {
     setStartDate(newDate);
   };
 
+
+  console.log('calendarBookingEvents:: ', calendarBookingEvents);
 
   return (
     <div >
@@ -236,14 +160,13 @@ const ResourceCalendar = (props: any) => {
       <DayPilotCalendar
         viewType={"Resources"}
         startDate={startDate}
-        events={bookingEvents}
+        events={calendarBookingEvents}
         visible={view === "Day"}
         durationBarVisible={false}
         onTimeRangeSelected={onTimeRangeSelected}
-
+        
         // controlRef={setDayView}
         columns={technicianColumns}
-        headerHeight={90}
         // onTimeRangeSelect={async (args) => {
         //   console.log('====================================');
         //   console.log('onTimeRangeSelect:: ', args);
@@ -267,6 +190,12 @@ const ResourceCalendar = (props: any) => {
           console.log('====================================');
         }
         }
+
+        // cellHeight={15}
+        businessBeginsHour={9}
+        businessEndsHour={17}
+
+        timeFormat='Clock12Hours'
 
       />
       <AddBookingEventModal
