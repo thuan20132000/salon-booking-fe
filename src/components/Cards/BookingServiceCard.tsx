@@ -36,20 +36,36 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   const [isShowSelectDuration, setIsShowSelectDuration] = useState<boolean>(false);
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [isShowSelectServicePrice, setIsShowSelectServicePrice] = useState<boolean>(false);
-  const [selectedServicePrice, setSelectedServicePrice] = useState<number | null>(null);
   
   const handleSelectServicePrice = (price: number) => {
-    setSelectedServicePrice(price);
+    // setSelectedServicePrice(price);
+    let updatedBookingService = { 
+      ...bookingService, 
+      price: price,
+    };
+    onUpdateBookingService?.(updatedBookingService);
     setIsShowSelectServicePrice(false);
   }
 
   const handleCancelSelectServicePrice = () => {
-    setSelectedServicePrice(null);
+    // setSelectedServicePrice(null);
     setIsShowSelectServicePrice(false);
   }
 
   const handleSelectDuration = (duration: number) => {
-    setSelectedDuration(duration);
+    // setSelectedDuration(duration);
+
+    let startAt = dayjs(bookingService.start_at).format('YYYY-MM-DD HH:mm:ss');
+    let endAt = dayjs(bookingService.start_at).add(duration, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+
+    let updatedBookingService = { 
+      ...bookingService, 
+      duration: duration,
+      start_at: startAt,
+      end_at: endAt,
+    };
+
+    onUpdateBookingService?.(updatedBookingService);
     setIsShowSelectDuration(false);
   }
 
@@ -87,7 +103,18 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   }
 
   const handleSelectBookingService = (service: Service) => {
-    let updatedBookingService = { ...bookingService, service: service };
+
+    let startAt = dayjs(bookingService.start_at).format('YYYY-MM-DD HH:mm:ss');
+    let endAt = dayjs(bookingService.start_at).add(service.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+
+    let updatedBookingService = { 
+      ...bookingService, 
+      service: service,
+      price: service.price,
+      duration: service.duration,
+      start_at: startAt,
+      end_at: endAt,
+    };
 
     onUpdateBookingService?.(updatedBookingService);
     setIsShowSalonServices(false);
@@ -96,12 +123,6 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   const handleCancelSelectBookingService = () => {
     setIsShowSalonServices(false);
   }
-
-  useEffect(() => {
-    if (initialDateTime) {
-      // setSelectedDateTime(initialDateTime.format('HH:mm'));
-    }
-  }, [initialDateTime]);
 
   const handleToggleRequested = () => {
     let updatedBookingService = { ...bookingService, is_requested: !bookingService.is_requested };
@@ -189,12 +210,14 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
           <Tag icon={<HourglassOutlined />} color="blue"
             onClick={() => setIsShowSelectDuration(true)}
           >
-            {selectedDuration ? formatDuration(selectedDuration) : formatDuration(bookingService.service?.duration)}
+            {/* check if custom duration is set or use the service duration */}
+            {bookingService.duration ? formatDuration(bookingService.duration) : formatDuration(bookingService.service?.duration)}
           </Tag>
           <Tag icon={<DollarOutlined />} color="green"
             onClick={() => setIsShowSelectServicePrice(true)}
           >
-            {selectedServicePrice ? formatPrice(selectedServicePrice) : formatPrice(bookingService.service?.price)}
+            {/* check if custom price is set or use the service price */}
+            {bookingService.price ? formatPrice(bookingService.price) : formatPrice(bookingService.service?.price)}
           </Tag>
         </Space>
       </Space>

@@ -9,7 +9,7 @@ export interface BookingServiceStore {
   booking: Booking;
   salonBookings: Booking[];
   salonBookingServices: BookingService[];
-  selectedUpdateBooking: Booking | null;
+  selectedUpdateBooking: Booking;
   calendarBookingEvents: DayPilot.EventData[];
   createBooking: (booking: Omit<Booking, 'id'>) => void;
   updateBooking: (updatedBooking: Partial<Booking>) => void;
@@ -20,6 +20,7 @@ export interface BookingServiceStore {
   removeBookingCustomer: () => void;
   removeBookingService: (id: number) => void;
   resetBooking: () => void;
+  resetSelectedUpdateBooking: () => void;
   updateBookingService: (bookingService: BookingService) => void;
 
   addBookingEvent: (booking: Booking) => void;
@@ -44,7 +45,17 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
   },
   salonBookings: [],
   salonBookingServices: [],
-  selectedUpdateBooking: null,
+  selectedUpdateBooking: {
+    booking_services: [],
+    customer: null,
+    total_price: 0,
+    total_duration: 0,
+    status: 'pending',
+    notes: '',
+    payment_method: '',
+    payment_status: '',
+    booking_date: '',
+  },
   calendarBookingEvents: [],
 
   // actions
@@ -97,6 +108,14 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
         ...state.booking,
         booking_services: [],
         customer: null,
+      }
+    }
+  }),
+
+  resetSelectedUpdateBooking: () => set((state) => {
+    return {
+      selectedUpdateBooking: {
+        ...state.selectedUpdateBooking,
       }
     }
   }),
@@ -202,6 +221,8 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
         return salonBooking;
       })
     }))
-  }
+  },
+
+  
 
 }));

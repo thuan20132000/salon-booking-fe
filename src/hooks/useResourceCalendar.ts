@@ -2,7 +2,10 @@ import { DayPilot } from "daypilot-pro-react";
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
 import { useBookingServiceStore, BookingServiceStore } from '@/store/useBookingServiceStore';
+import { Day } from "react-big-calendar";
+import { BookingService, Booking } from "@/interfaces/salon";
 import dayjs from "dayjs";
+
 interface UseResourceCalendar {
 
   // state
@@ -24,9 +27,9 @@ interface UseResourceCalendar {
   handleNextDay: () => void;
   handlePreviousDay: () => void;
   handleToday: () => void;
-  handleEventMove: (args: any) => void;
-  handleEventResize: (args: any) => void;
-  handleEventClick: (args: any) => void;
+  handleCalendarEventMoved: (args: DayPilot.CalendarEventMovedArgs) => void;
+  handleCalendarEventResize: (args: any) => void;
+  handleCalendarEventClick: (args: DayPilot.CalendarEventClickArgs) => void;
   getTechnicianColumns: () => DayPilot.CalendarColumnData[];
   onCalendarEventClick: (args: DayPilot.CalendarEventClickArgs) => void;
   getTransformedCalendarBookingEvents: DayPilot.EventData[];
@@ -37,7 +40,8 @@ export const useResourceCalendar = (): UseResourceCalendar => {
   const {
     calendarBookingEvents,
     salonBookings,
-    salonBookingServices,
+    updateBookingService,
+    updateSelectedUpdateBooking,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
 
   const { salonTechnicians, salonServices } = useSalonStore((state: SalonState) => state);
@@ -68,34 +72,58 @@ export const useResourceCalendar = (): UseResourceCalendar => {
   const handlePreviousDay = () => setStartDate(startDate.addDays(-1));
   const handleToday = () => setStartDate(DayPilot.Date.today());
 
-  const handleEventMove = (args: DayPilot.CalendarEventMoveArgs) => {
-    console.log('Event moved:', args);
+  const handleCalendarEventMoved = (args: DayPilot.CalendarEventMovedArgs) => {
+    const { e, newStart, newEnd, newResource } = args;
+    const booking: Booking = e.data.metadata?.booking;
+    const bookingService: BookingService = e.data.metadata?.booking_service;
+
+    const newTechnician = salonTechnicians.find((technician) => technician.id === newResource);
+
+    const newBookingService: BookingService = {
+      ...bookingService,
+      start_at: dayjs(newStart.toString()).format('YYYY-MM-DD HH:mm:ss'),
+      end_at: dayjs(newEnd.toString()).format('YYYY-MM-DD HH:mm:ss'),
+      technician: newTechnician || null,
+    }
+
+    const newBooking: Booking = {
+      ...booking,
+      booking_services: booking.booking_services.map((bs) => bs.id === bookingService.id ? newBookingService : bs),
+    }
+    
+    updateSelectedUpdateBooking(newBooking);
   };
 
-  const handleEventResize = (args: any) => {
+  const handleCalendarEventResize = (args: DayPilot.CalendarEventResizeArgs) => {
     console.log('Event resized:', args);
+    const { e, newStart, newEnd } = args;
+    const booking: Booking = e?.data?.metadata?.booking;
+    const bookingService: BookingService = e?.data?.metadata?.booking_service;
+
+    const newBookingService: BookingService = {
+      ...bookingService,
+      start_at: dayjs(newStart?.toString()).format('YYYY-MM-DD HH:mm:ss'),
+      end_at: dayjs(newEnd?.toString()).format('YYYY-MM-DD HH:mm:ss'),
+      duration: dayjs(newEnd?.toString()).diff(dayjs(newStart?.toString()), 'minutes'),
+    }
+
+    const newBooking: Booking = {
+      ...booking,
+      booking_services: booking.booking_services.map((bs) => bs.id === bookingService.id ? newBookingService : bs),
+    }
+
+    updateSelectedUpdateBooking(newBooking);
+    
+    
   };
 
-  const handleEventClick = (args: DayPilot.CalendarEventClickArgs) => {
-    console.log('Event clicked:', args);
-  };
-
-  const handleUpdateBookingEvent = (event: DayPilot.EventData) => {
-    console.log('Update booking event:', event);
+  const handleCalendarEventClick = (args: DayPilot.CalendarEventClickArgs) => {
+    setSelectedUpdateEvent(args.e.data);
     setIsShowUpdateBookingEvent(true);
   };
 
-  const handleDeleteBookingEvent = (event: DayPilot.EventData) => {
-    console.log('Delete booking event:', event);
-  };
-
-  const handleAddBookingEvent = (event: DayPilot.EventData) => {
-    console.log('Add booking event:', event);
-  };
 
   const onCalendarEventClick = (args: DayPilot.CalendarEventClickArgs) => {
-    console.log('Calendar event clicked:', args);
-    console.log('Event data:', args.e.data);
     setSelectedUpdateEvent(args.e.data);
     setIsShowUpdateBookingEvent(true);
 
@@ -190,9 +218,9 @@ export const useResourceCalendar = (): UseResourceCalendar => {
     handleNextDay,
     handlePreviousDay,
     handleToday,
-    handleEventMove,
-    handleEventResize,
-    handleEventClick,
+    handleCalendarEventMoved,
+    handleCalendarEventResize,
+    handleCalendarEventClick,
     getTechnicianColumns,
     isShowUpdateBookingEvent,
     setIsShowUpdateBookingEvent,

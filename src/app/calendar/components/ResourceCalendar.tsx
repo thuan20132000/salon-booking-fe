@@ -14,7 +14,6 @@ const ResourceCalendar = (props: any) => {
   const {
     view,
     startDate,
-    calendarBookingEvents,
     selectedEvent,
     isShowAddBookingEvent,
     setIsShowAddBookingEvent,
@@ -27,9 +26,11 @@ const ResourceCalendar = (props: any) => {
     isShowUpdateBookingEvent,
     setIsShowUpdateBookingEvent,
     selectedUpdateEvent,
-    setSelectedUpdateEvent,
     onCalendarEventClick,
     getTransformedCalendarBookingEvents,
+    handleCalendarEventMoved,
+    handleCalendarEventResize,
+    handleCalendarEventClick,
   } = useResourceCalendar();
 
 
@@ -55,19 +56,14 @@ const ResourceCalendar = (props: any) => {
         columns={getTechnicianColumns()}
 
         onEventMoved={async (args) => {
-          console.log('====================================');
-          console.log('args:: ', args);
-          console.log('====================================');
-
+          handleCalendarEventMoved(args);
         }}
+        
         onEventResized={async (args) => {
-          console.log('====================================');
-          console.log('resized:: ', args);
-          console.log('====================================');
-        }
-        }
+          handleCalendarEventResize(args);
+        }}
         onEventClick={async (args) => {
-          onCalendarEventClick(args);
+          handleCalendarEventClick(args);
         }}
 
         businessBeginsHour={9}
