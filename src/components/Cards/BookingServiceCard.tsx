@@ -13,7 +13,6 @@ import SelectServicePriceDrawer from '../Drawers/SelectServicePriceDrawer';
 const { Text, Title } = Typography;
 
 interface BookingServiceCardProps {
-  technician: Technician | null;
   initialDateTime: Dayjs; // ISO string
   onClick?: () => void;
   onRemove?: () => void;
@@ -23,7 +22,6 @@ interface BookingServiceCardProps {
 }
 
 const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
-  technician,
   initialDateTime,
   onClick,
   onRemove,
@@ -32,7 +30,6 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   booking,
 }) => {
   const [isShowSelectTechnician, setIsShowSelectTechnician] = useState<boolean>(false);
-  const [selectedTechnician, setSelectedTechnician] = useState<Technician | null>(technician);
   const [isShowSalonServices, setIsShowSalonServices] = useState<boolean>(false);
   const [isHover, setIsHover] = useState<boolean>(false);
   const [isShowSelectBookingTime, setIsShowSelectBookingTime] = useState<boolean>(false);
@@ -62,12 +59,11 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   }
 
   const handleSelectTechnician = (technician: Technician) => {
-    setSelectedTechnician(technician);
     setIsShowSelectTechnician(false);
+    onUpdateBookingService?.({ ...bookingService, technician: technician }); 
   }
 
   const handleCancelSelectTechnician = () => {
-    setSelectedTechnician(null);
     setIsShowSelectTechnician(false);
   }
 
@@ -156,7 +152,7 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
               size="small"
               placeholder="technician"
               onClick={() => setIsShowSelectTechnician(true)}
-              value={selectedTechnician?.name}
+              value={bookingService.technician?.name}
               prefix={<UserOutlined />}
               prefixCls="custom-prefix"
               suffix={

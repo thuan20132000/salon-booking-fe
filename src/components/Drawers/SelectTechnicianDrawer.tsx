@@ -2,31 +2,26 @@ import React, { useState } from 'react';
 import { Drawer, Input, List, Avatar } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { Technician } from '@/interfaces/salon';
+import { useSalonStore, SalonState } from '@/store/useSalonStore';
 interface SelectTechnicianDrawerProps {
   open: boolean;
   onClose: () => void;
   onSelect: (technician: Technician) => void;
 }
 
-const defaultTechnicians: Technician[] = [
-  { id: '1', name: 'John Smith' },
-  { id: '2', name: 'Sarah Johnson' },
-  { id: '3', name: 'Mike Brown' },
-  { id: '4', name: 'Emily Davis' },
-  { id: '5', name: 'David Wilson' },
-];
 
 const SelectTechnicianDrawer: React.FC<SelectTechnicianDrawerProps> = ({
   open,
   onClose,
   onSelect,
 }) => {
+  const { salonTechnicians } = useSalonStore((state: SalonState) => state);
   const [searchText, setSearchText] = useState('');
-  const [technicians, setTechnicians] = useState<Technician[]>(defaultTechnicians);
+  const [technicians, setTechnicians] = useState<Technician[]>(salonTechnicians);
 
   const handleSearch = (value: string) => {
     setSearchText(value);
-    const filtered = defaultTechnicians.filter((tech) =>
+    const filtered = salonTechnicians.filter((tech) =>
       tech.name.toLowerCase().includes(value.toLowerCase())
     );
     setTechnicians(filtered);

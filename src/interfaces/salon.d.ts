@@ -1,4 +1,17 @@
 
+export interface Salon {
+  id: any;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  logo: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Technician {
   id: any;
   name: string;

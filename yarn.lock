@@ -1061,6 +1061,12 @@ dayjs@^1.11.11, dayjs@^1.11.13, dayjs@^1.11.7:
   resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.13.tgz"
   integrity sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==
 
+"daypilot-pro-react@https://npm.daypilot.org/daypilot-pro-react/trial/2025.1.6393.tar.gz":
+  version "2025.1.6393"
+  resolved "https://npm.daypilot.org/daypilot-pro-react/trial/2025.1.6393.tar.gz#da846777b7fa27956bd81666ff15367f335fca6b"
+  dependencies:
+    create-react-class ">=15.0.0"
+
 debug@^3.2.7:
   version "3.2.7"
   resolved "https://registry.npmjs.org/debug/-/debug-3.2.7.tgz"

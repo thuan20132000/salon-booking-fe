@@ -7,6 +7,7 @@ import useNotification from "@/hooks/useNotification";
 import SignIn from "./auth/signin/page";
 import EmployeePage from "./employees/page";
 import ResourceCalendar from "./calendar/components/ResourceCalendar";
+import { useSalonStore, SalonState } from "@/store/useSalonStore";
 
 // export const metadata: Metadata = {
 //   title:
@@ -15,6 +16,12 @@ import ResourceCalendar from "./calendar/components/ResourceCalendar";
 // };
 
 export default function Home() {
+
+  const { initSalonData } = useSalonStore((state:SalonState) => state);
+
+  useEffect(() => {
+    initSalonData();
+  }, []);
 
  
   return (

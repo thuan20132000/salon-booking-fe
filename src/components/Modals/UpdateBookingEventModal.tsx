@@ -6,38 +6,34 @@ import BookingServiceCard from '@/components/Cards/BookingServiceCard';
 import { DayPilot } from 'daypilot-pro-react';
 import { PlusOutlined } from '@ant-design/icons';
 import SelectBookingServiceDrawer from '@/components/Drawers/SelectBookingServiceDrawer';
-import { BookingService, Customer, Service } from '@/interfaces/salon';
+import { BookingService, Customer, Service, Booking } from '@/interfaces/salon';
 import { useBookingServiceStore, BookingServiceStore } from '@/store/useBookingServiceStore';
 import SelectSalonCustomerDrawer from '@/components/Drawers/SelectSalonCustomerDrawer';
 import CustomerCard from '@/components/Cards/CustomerCard';
 import { SelectCustomerCard } from '@/components/Cards/SelectCustomerCard';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
-interface AddBookingEventModalProps {
+
+interface UpdateBookingEventModalProps {
   open: boolean;
   onCancel: () => void;
-  eventData: DayPilot.CalendarTimeRangeSelectedArgs | null;
+  eventData: DayPilot.EventData | null;
+  
 }
 
-const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
+const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
   open,
   onCancel,
   eventData,
 }) => {
 
   const {
-    booking,
-    initBookingServices,
-    addBookingService,
-    addBookingCustomer,
-    removeBookingCustomer,
-    removeBookingService,
-    resetBooking,
-    updateBookingService,
-    addBookingEvent,
+    selectedUpdateBooking,
+    setSelectedUpdateBooking,
     updateBooking,
-    addSalonBooking,
+    resetBooking,
+    updateSelectedUpdateBooking,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
-
+ 
   const { salonTechnicians } = useSalonStore((state: SalonState) => state);
 
   const [form] = Form.useForm();
@@ -48,25 +44,29 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
 
   const handleSelectBookingService = (service: Service) => {
 
+    console.log('update service:: ', service);
+
     let technician = salonTechnicians.find((technician) => technician.id === eventData?.resource);
 
-    addBookingService({
-      id: generateTimestampNumber(),
-      service: service,
-      technician: technician || null,
-      price: service.price,
-      duration: service.duration,
-      start_at: dayjs(eventData?.start.toString()).format('YYYY-MM-DD HH:mm:ss'),
-      end_at: dayjs(eventData?.start.toString()).add(service.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
-      is_requested: false,
-      booking_date: dayjs(booking.booking_date).format('YYYY-MM-DD'),
-    });
+    // updateSelectedUpdateBooking({
+    //   id: generateTimestampNumber(),
+    //   service: service,
+    //   technician: technician || null,
+    //   price: service.price,
+    //   duration: service.duration,
+    //   start_at: dayjs(eventData?.start.toString()).format('YYYY-MM-DD HH:mm:ss'),
+    //   end_at: dayjs(eventData?.start.toString()).add(service.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+    //   is_requested: false,
+    //   booking_date: dayjs(eventData?.metadata?.booking?.booking_date).format('YYYY-MM-DD'),
+    // });
     setIsShowSelectBookingService(false);
   }
 
   const handleSelectCustomer = (customer: Customer) => {
     setIsShowSelectCustomer(false);
-    addBookingCustomer(customer);
+    updateBooking({
+      customer: customer,
+    });
   }
 
   const handleCancelSelectCustomer = () => {
@@ -74,7 +74,9 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
   }
 
   const handleRemoveCustomer = () => {
-    removeBookingCustomer();
+    updateBooking({
+      customer: null,
+    });
   }
 
   const handleCancelSelectBookingService = () => {
@@ -90,31 +92,59 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
   }
 
   const handleUpdateBookingService = (bookingService: BookingService) => {
+  
 
-    if (!bookingService.technician) {
-      let technician = salonTechnicians.find((technician) => technician.id === bookingService.technician?.id);
-      bookingService.technician = technician || null;
-    }
+    let newBookingServices = selectedUpdateBooking?.booking_services?.map((bs) => {
+      if (bs.id === bookingService.id) {
+        return bookingService;
+      }
+      return bs;
+    })
 
-    updateBookingService(bookingService);
+    let newBooking:Booking = {
+      ...selectedUpdateBooking,
+      booking_services: newBookingServices || [],
+      customer: selectedUpdateBooking?.customer || null,
+      total_price: selectedUpdateBooking?.total_price || 0,
+      total_duration: selectedUpdateBooking?.total_duration || 0,
+      status: selectedUpdateBooking?.status || 'pending',
+      notes: selectedUpdateBooking?.notes || '',
+      payment_method: selectedUpdateBooking?.payment_method || '',
+      payment_status: selectedUpdateBooking?.payment_status || '',
+      booking_date: selectedUpdateBooking?.booking_date || '',
+      id: selectedUpdateBooking?.id || '',
+    } 
+
+    setSelectedUpdateBooking(newBooking);
+
+    console.log('newBooking:: ', newBooking);
+
+    // updateSelectedUpdateBooking(newBooking);   
+
+    // updateSelectedUpdateBooking(bookingService, {
+    //   booking_services: [...selectedUpdateBooking?.booking_services, bookingService],
+    // });
+
+    // updateBooking({
+    //   booking_services: [...selectedUpdateBooking?.booking_services, bookingService],
+    // });
 
   }
 
   useEffect(() => {
-    initBookingServices(eventData);
-  }, [initBookingServices, eventData]);
+    // initBookingServices(eventData);
+    setSelectedUpdateBooking(eventData?.metadata?.booking);
+  }, [eventData]);
 
   const onCloseModal = () => {
-    resetBooking();
+      resetBooking();
     onCancel();
   }
 
   const handleSaveBookingEvent = () => {
-    // addBookingEvent(booking);
-    addSalonBooking({
-      ...booking,
-      id: generateTimestampNumber(),
-    });
+    if(selectedUpdateBooking) {
+      updateSelectedUpdateBooking(selectedUpdateBooking);
+    }
     onCloseModal();
   }
 
@@ -124,9 +154,11 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
     });
   }
 
+  console.log('update booking eventData:: ', eventData?.metadata);
+
   return (
     <Modal
-      title="Add New Booking"
+      title="Update Booking"
       open={open}
       onCancel={onCloseModal}
       footer={[
@@ -134,7 +166,7 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
           Cancel
         </Button>,
         <Button key="submit" type="default" onClick={handleSaveBookingEvent}>
-          Save Appointment
+          Update Appointment
         </Button>,
       ]}
     >
@@ -148,10 +180,10 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
       >
         <Space direction='vertical' className='w-full flex justify-end mb-2'>
           {
-            booking.customer ?
+            selectedUpdateBooking?.customer ?
               <CustomerCard
-                name={booking.customer.name}
-                phoneNumber={booking.customer.phone}
+                name={selectedUpdateBooking?.customer.name}
+                phoneNumber={selectedUpdateBooking?.customer.phone}
                 onClose={handleRemoveCustomer}
               />
               :
@@ -163,23 +195,22 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
           className='w-full mb-2'
         >
           <DatePicker
-            defaultValue={dayjs(booking.booking_date)}
+            defaultValue={dayjs(selectedUpdateBooking?.booking_date)}
             format={'dddd, MMMM D, YYYY'}
             className='w-full'
-            value={dayjs(booking.booking_date)}
+            value={dayjs(selectedUpdateBooking?.booking_date)}
             onChange={onChangeBookingDate}
           />
         </Space>
 
         <Space direction='vertical' className='w-full'>
-          {booking.booking_services.map((bookingService, index) => (
+          {selectedUpdateBooking?.booking_services.map((bookingService: BookingService, index: number) => (
             <BookingServiceCard
               key={bookingService?.id}
               initialDateTime={dayjs(bookingService.start_at)}
               onClick={() => { }}
-              onRemove={() => removeBookingService(bookingService.id)}
               bookingService={bookingService}
-              booking={booking}
+              booking={selectedUpdateBooking}
               onUpdateBookingService={handleUpdateBookingService}
             />
           ))}
@@ -191,7 +222,7 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
         >
           Add Service
         </Button>
-     
+       
         <SelectBookingServiceDrawer
           open={isShowSelectBookingService}
           onClose={handleCancelSelectBookingService}
@@ -209,4 +240,4 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
   );
 };
 
-export default AddBookingEventModal;
+export default UpdateBookingEventModal;

@@ -22,7 +22,7 @@ const SelectBookingServiceDrawer: React.FC<SelectBookingServiceDrawerProps> = ({
   const sampleServices: Service[] = [
     { id: 1, name: 'Haircut', duration: 30, price: 35 },
     { id: 2, name: 'Hair Coloring', duration: 120, price: 120 },
-    { id: 3, name: 'Manicure', duration: 45, price: 40 },
+    { id: 3, name: 'Manicure', duration: 60, price: 40 },
     { id: 4, name: 'Pedicure', duration: 60, price: 50 },
     { id: 5, name: 'Facial Treatment', duration: 60, price: 80 },
     { id: 6, name: 'Massage', duration: 60, price: 90 },
