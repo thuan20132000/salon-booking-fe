@@ -3,7 +3,7 @@ import {
   DayPilot,
   DayPilotCalendar,
 } from "daypilot-pro-react";
-import AddBookingEventModal from '@/components/Modals/AddBookingEventModal';
+import CreateBookingEventModal from '@/components/Modals/CreateBookingEventModal';
 import CalendarControlBar from '@/components/Sidebar/CalendarControlBar';
 import { useResourceCalendar } from "@/hooks/useResourceCalendar";
 import UpdateBookingEventModal from '@/components/Modals/UpdateBookingEventModal';
@@ -31,6 +31,7 @@ const ResourceCalendar = (props: any) => {
     handleCalendarEventMoved,
     handleCalendarEventResize,
     handleCalendarEventClick,
+
   } = useResourceCalendar();
 
 
@@ -72,7 +73,7 @@ const ResourceCalendar = (props: any) => {
         timeFormat='Clock12Hours'
 
       />
-      <AddBookingEventModal
+      <CreateBookingEventModal
         open={isShowAddBookingEvent}
         onCancel={() => setIsShowAddBookingEvent(false)}
         eventData={selectedEvent}

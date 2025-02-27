@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+
+const LOCAL_API_URL = "http://192.168.2.241:8000/api";
+const PROD_API_URL = "https://api.salon.com/api";
+
 // Create an Axios instance
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // Replace with your API base URL
+  baseURL: LOCAL_API_URL, // Replace with your API base URL
   timeout: 10000, // Set a timeout for requests
 });
 

@@ -4,7 +4,8 @@ import { ClockCircleOutlined, HourglassOutlined, DollarOutlined, UserOutlined, D
 import { formatPrice, formatDuration, formatTime } from '@/utils/helpers';
 import SelectTechnicianDrawer from '@/components/Drawers/SelectTechnicianDrawer';
 import SelectDateTimeDrawer from '@/components/Drawers/SelectDateTimeDrawer';
-import { Service, Technician, BookingService, Booking } from '@/interfaces/salon';
+import { Service, Employee, } from '@/interfaces/salon';
+import { BookingService, Booking } from '@/interfaces/booking';
 import dayjs, { Dayjs } from 'dayjs';
 import SelectBookingServiceDrawer from '../Drawers/SelectBookingServiceDrawer';
 import SelectBookingTimeDrawer from '../Drawers/SelectBookingTimeDrawer';
@@ -36,11 +37,11 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   const [isShowSelectDuration, setIsShowSelectDuration] = useState<boolean>(false);
   const [selectedDuration, setSelectedDuration] = useState<number | null>(null);
   const [isShowSelectServicePrice, setIsShowSelectServicePrice] = useState<boolean>(false);
-  
+
   const handleSelectServicePrice = (price: number) => {
     // setSelectedServicePrice(price);
-    let updatedBookingService = { 
-      ...bookingService, 
+    let updatedBookingService = {
+      ...bookingService,
       price: price,
     };
     onUpdateBookingService?.(updatedBookingService);
@@ -48,18 +49,16 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
   }
 
   const handleCancelSelectServicePrice = () => {
-    // setSelectedServicePrice(null);
     setIsShowSelectServicePrice(false);
   }
 
   const handleSelectDuration = (duration: number) => {
-    // setSelectedDuration(duration);
 
     let startAt = dayjs(bookingService.start_at).format('YYYY-MM-DD HH:mm:ss');
     let endAt = dayjs(bookingService.start_at).add(duration, 'minutes').format('YYYY-MM-DD HH:mm:ss');
 
-    let updatedBookingService = { 
-      ...bookingService, 
+    let updatedBookingService = {
+      ...bookingService,
       duration: duration,
       start_at: startAt,
       end_at: endAt,
@@ -74,9 +73,9 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
     setIsShowSelectDuration(false);
   }
 
-  const handleSelectTechnician = (technician: Technician) => {
+  const handleSelectTechnician = (technician: Employee) => {
     setIsShowSelectTechnician(false);
-    onUpdateBookingService?.({ ...bookingService, technician: technician }); 
+    onUpdateBookingService?.({ ...bookingService, employee: technician });
   }
 
   const handleCancelSelectTechnician = () => {
@@ -88,8 +87,8 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
     let startAt = datetime.format('YYYY-MM-DD HH:mm:ss');
     let endAt = datetime.add(bookingService.service?.duration ?? 0, 'minutes').format('YYYY-MM-DD HH:mm:ss');
     // return
-    let updatedBookingService = { 
-      ...bookingService, 
+    let updatedBookingService = {
+      ...bookingService,
       start_at: startAt,
       end_at: endAt
     };
@@ -107,8 +106,8 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
     let startAt = dayjs(bookingService.start_at).format('YYYY-MM-DD HH:mm:ss');
     let endAt = dayjs(bookingService.start_at).add(service.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss');
 
-    let updatedBookingService = { 
-      ...bookingService, 
+    let updatedBookingService = {
+      ...bookingService,
       service: service,
       price: service.price,
       duration: service.duration,
@@ -173,7 +172,7 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
               size="small"
               placeholder="technician"
               onClick={() => setIsShowSelectTechnician(true)}
-              value={bookingService.technician?.name}
+              value={bookingService.employee?.name}
               prefix={<UserOutlined />}
               prefixCls="custom-prefix"
               suffix={
@@ -241,12 +240,12 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
         open={isShowSelectDuration}
         onClose={handleCancelSelectDuration}
         onSelect={handleSelectDuration}
-      /> 
+      />
       <SelectServicePriceDrawer
         open={isShowSelectServicePrice}
         onClose={handleCancelSelectServicePrice}
         onSubmit={handleSelectServicePrice}
-      /> 
+      />
     </Card>
   );
 };

@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
 import { useBookingServiceStore, BookingServiceStore } from '@/store/useBookingServiceStore';
 import { Day } from "react-big-calendar";
-import { BookingService, Booking } from "@/interfaces/salon";
+import { BookingService, Booking } from "@/interfaces/booking";
 import dayjs from "dayjs";
 
 interface UseResourceCalendar {
@@ -40,8 +40,8 @@ export const useResourceCalendar = (): UseResourceCalendar => {
   const {
     calendarBookingEvents,
     salonBookings,
-    updateBookingService,
     updateSelectedUpdateBooking,
+    getCalendarBookings,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
 
   const { salonTechnicians, salonServices } = useSalonStore((state: SalonState) => state);
@@ -83,7 +83,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
       ...bookingService,
       start_at: dayjs(newStart.toString()).format('YYYY-MM-DD HH:mm:ss'),
       end_at: dayjs(newEnd.toString()).format('YYYY-MM-DD HH:mm:ss'),
-      technician: newTechnician || null,
+      employee: newTechnician || null,
     }
 
     const newBooking: Booking = {
@@ -131,12 +131,12 @@ export const useResourceCalendar = (): UseResourceCalendar => {
 
   const getTransformedCalendarBookingEvents = useMemo(() => {
 
-    let bookingEvent: DayPilot.EventData[] = []
+    let bookingEvents: DayPilot.EventData[] = []
 
 
     salonBookings.forEach((booking) => {
       booking.booking_services.forEach((bookingService) => {
-        bookingEvent.push({
+        bookingEvents.push({
           id: bookingService.id,
           text: "",
           start: new DayPilot.Date(bookingService?.start_at || ''),
@@ -144,7 +144,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
           backColor: "#ffd966", // Yellow background
           borderColor: "darker",
           cssClass: "event-with-areas",
-          resource: bookingService.technician?.id || '',
+          resource: bookingService.employee?.id || '',
           metadata: {
             booking_service: bookingService,
             booking: booking
@@ -170,7 +170,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
             {
               left: 0,
               top: 20,
-              html: `<div style='font-size: 12px;font-weight:bold;'>${booking?.customer?.name || ''}</div>`,
+              html: `<div style='font-size: 12px;font-weight:bold;'>${booking?.customer?.full_name || ''}</div>`,
               padding: 2,
               height: 20,
             },
@@ -186,7 +186,8 @@ export const useResourceCalendar = (): UseResourceCalendar => {
         })
       })
     })
-    return bookingEvent;
+
+    return bookingEvents;
   }, [salonBookings])
 
 
@@ -205,6 +206,12 @@ export const useResourceCalendar = (): UseResourceCalendar => {
 
     return transformedColumns;
   }, [salonTechnicians, salonServices]);
+
+  useEffect(() => {
+    getCalendarBookings({
+      salon_id: 1,
+    });
+  }, [startDate]);
 
   return {
     view,

@@ -12,16 +12,16 @@ interface SelectSalonCustomerDrawerProps {
 }
 
 const sampleCustomers: Customer[] = [
-  { id: 1, name: 'John Doe', phone: '123-456-7890', email: 'john@example.com' },
-  { id: 2, name: 'Jane Smith', phone: '234-567-8901', email: 'jane@example.com' },
-  { id: 3, name: 'Mike Johnson', phone: '345-678-9012', email: 'mike@example.com' },
-  { id: 4, name: 'Sarah Williams', phone: '456-789-0123', email: 'sarah@example.com' },
-  { id: 5, name: 'David Brown', phone: '567-890-1234', email: 'david@example.com' },
-  { id: 6, name: 'Emily Davis', phone: '678-901-2345', email: 'emily@example.com' },
-  { id: 7, name: 'Michael Wilson', phone: '789-012-3456', email: 'michael@example.com' },
-  { id: 8, name: 'Lisa Anderson', phone: '890-123-4567', email: 'lisa@example.com' },
-  { id: 9, name: 'Robert Taylor', phone: '901-234-5678', email: 'robert@example.com' },
-  { id: 10, name: 'Amy Martinez', phone: '012-345-6789', email: 'amy@example.com' },
+  { id: 1, full_name: 'John Doe', phone_number: '123-456-7890', email: 'john@example.com' },
+  { id: 2, full_name: 'Jane Smith', phone_number: '234-567-8901', email: 'jane@example.com' },
+  { id: 3, full_name: 'Mike Johnson', phone_number: '345-678-9012', email: 'mike@example.com' },
+  { id: 4, full_name: 'Sarah Williams', phone_number: '456-789-0123', email: 'sarah@example.com' },
+  { id: 5, full_name: 'David Brown', phone_number: '567-890-1234', email: 'david@example.com' },
+  { id: 6, full_name: 'Emily Davis', phone_number: '678-901-2345', email: 'emily@example.com' },
+  { id: 7, full_name: 'Michael Wilson', phone_number: '789-012-3456', email: 'michael@example.com' },
+  { id: 8, full_name: 'Lisa Anderson', phone_number: '890-123-4567', email: 'lisa@example.com' },
+  { id: 9, full_name: 'Robert Taylor', phone_number: '901-234-5678', email: 'robert@example.com' },
+  { id: 10, full_name: 'Amy Martinez', phone_number: '012-345-6789', email: 'amy@example.com' },
 ];
 
 const SelectSalonCustomerDrawer: React.FC<SelectSalonCustomerDrawerProps> = ({
@@ -36,8 +36,8 @@ const SelectSalonCustomerDrawer: React.FC<SelectSalonCustomerDrawerProps> = ({
     setSearchText(value);
     const filtered = sampleCustomers.filter(
       (customer) =>
-        customer.name.toLowerCase().includes(value.toLowerCase()) ||
-        customer.phone.includes(value) ||
+        customer.full_name.toLowerCase().includes(value.toLowerCase()) ||
+        customer.phone_number.includes(value) ||
         customer.email.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredCustomers(filtered);
@@ -68,11 +68,11 @@ const SelectSalonCustomerDrawer: React.FC<SelectSalonCustomerDrawerProps> = ({
             className="hover:bg-gray-100"
           >
             <List.Item.Meta
-              avatar={<Avatar>{customer.name[0]}</Avatar>}
-              title={customer.name}
+              avatar={<Avatar>{customer.full_name[0]}</Avatar>}
+              title={customer.full_name}
               description={
                 <>
-                  <div>{customer.phone}</div>
+                  <div>{customer.phone_number}</div>
                   <div>{customer.email}</div>
                 </>
               }

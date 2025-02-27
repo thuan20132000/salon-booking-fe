@@ -6,19 +6,21 @@ import BookingServiceCard from '@/components/Cards/BookingServiceCard';
 import { DayPilot } from 'daypilot-pro-react';
 import { PlusOutlined } from '@ant-design/icons';
 import SelectBookingServiceDrawer from '@/components/Drawers/SelectBookingServiceDrawer';
-import { BookingService, Customer, Service } from '@/interfaces/salon';
+import { BookingService, Booking } from '@/interfaces/booking';
+import { Customer } from '@/interfaces/salon';
+import { Service } from '@/interfaces/salon';
 import { useBookingServiceStore, BookingServiceStore } from '@/store/useBookingServiceStore';
 import SelectSalonCustomerDrawer from '@/components/Drawers/SelectSalonCustomerDrawer';
 import CustomerCard from '@/components/Cards/CustomerCard';
 import { SelectCustomerCard } from '@/components/Cards/SelectCustomerCard';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
-interface AddBookingEventModalProps {
+interface CreateBookingEventModalProps {
   open: boolean;
   onCancel: () => void;
   eventData: DayPilot.CalendarTimeRangeSelectedArgs | null;
 }
 
-const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
+const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
   open,
   onCancel,
   eventData,
@@ -33,9 +35,9 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
     removeBookingService,
     resetBooking,
     updateBookingService,
-    addBookingEvent,
     updateBooking,
     addSalonBooking,
+    setBooking,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
 
   const { salonTechnicians } = useSalonStore((state: SalonState) => state);
@@ -53,13 +55,13 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
     addBookingService({
       id: generateTimestampNumber(),
       service: service,
-      technician: technician || null,
+      employee: technician || null,
       price: service.price,
       duration: service.duration,
       start_at: dayjs(eventData?.start.toString()).format('YYYY-MM-DD HH:mm:ss'),
       end_at: dayjs(eventData?.start.toString()).add(service.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
       is_requested: false,
-      booking_date: dayjs(booking.booking_date).format('YYYY-MM-DD'),
+      selected_date: dayjs(booking.selected_date).format('YYYY-MM-DD'),
     });
     setIsShowSelectBookingService(false);
   }
@@ -91,9 +93,9 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
 
   const handleUpdateBookingService = (bookingService: BookingService) => {
 
-    if (!bookingService.technician) {
-      let technician = salonTechnicians.find((technician) => technician.id === bookingService.technician?.id);
-      bookingService.technician = technician || null;
+    if (!bookingService.employee) {
+      let technician = salonTechnicians.find((technician) => technician.id === bookingService.employee?.id);
+      bookingService.employee = technician || null;
     }
 
     updateBookingService(bookingService);
@@ -119,9 +121,22 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
   }
 
   const onChangeBookingDate = (value: Dayjs) => {
-    updateBooking({
-      booking_date: value.format('YYYY-MM-DD'),
-    });
+
+    let newBooking: Booking = {
+      ...booking,
+      selected_date: value.format('YYYY-MM-DD'),
+      booking_services: booking.booking_services.map((bookingService: BookingService) => {
+        let newStart = dayjs(bookingService.start_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
+        let newEnd = dayjs(bookingService.end_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
+        return {
+          ...bookingService,
+          start_at: newStart,
+          end_at: newEnd,
+          selected_date: value.format('YYYY-MM-DD'),
+        }
+      }),
+    }
+    setBooking(newBooking);
   }
 
   return (
@@ -150,8 +165,8 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
           {
             booking.customer ?
               <CustomerCard
-                name={booking.customer.name}
-                phoneNumber={booking.customer.phone}
+                name={booking.customer.full_name}
+                phoneNumber={booking.customer.phone_number}
                 onClose={handleRemoveCustomer}
               />
               :
@@ -163,10 +178,10 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
           className='w-full mb-2'
         >
           <DatePicker
-            defaultValue={dayjs(booking.booking_date)}
+            defaultValue={dayjs(booking.selected_date)}
             format={'dddd, MMMM D, YYYY'}
             className='w-full'
-            value={dayjs(booking.booking_date)}
+            value={dayjs(booking.selected_date)}
             onChange={onChangeBookingDate}
           />
         </Space>
@@ -209,4 +224,4 @@ const AddBookingEventModal: React.FC<AddBookingEventModalProps> = ({
   );
 };
 
-export default AddBookingEventModal;
+export default CreateBookingEventModal;

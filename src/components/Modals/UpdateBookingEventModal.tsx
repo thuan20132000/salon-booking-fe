@@ -6,7 +6,9 @@ import BookingServiceCard from '@/components/Cards/BookingServiceCard';
 import { DayPilot } from 'daypilot-pro-react';
 import { PlusOutlined } from '@ant-design/icons';
 import SelectBookingServiceDrawer from '@/components/Drawers/SelectBookingServiceDrawer';
-import { BookingService, Customer, Service, Booking } from '@/interfaces/salon';
+import { BookingService, Booking } from '@/interfaces/booking';
+import { Customer } from '@/interfaces/salon';
+import { Service } from '@/interfaces/salon';
 import { useBookingServiceStore, BookingServiceStore } from '@/store/useBookingServiceStore';
 import SelectSalonCustomerDrawer from '@/components/Drawers/SelectSalonCustomerDrawer';
 import CustomerCard from '@/components/Cards/CustomerCard';
@@ -29,7 +31,6 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
   const {
     selectedUpdateBooking,
     setSelectedUpdateBooking,
-    updateBooking,
     updateSelectedUpdateBooking,
     resetSelectedUpdateBooking,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
@@ -49,13 +50,13 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
     let newBookingService: BookingService = {
       id: generateTimestampNumber(),
       service: service,
-      technician: technician || null,
+      employee: technician || null,
       price: service.price,
       duration: service.duration,
       start_at: dayjs(eventData?.start.toString()).format('YYYY-MM-DD HH:mm:ss'),
       end_at: dayjs(eventData?.start.toString()).add(service.duration, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
       is_requested: false,
-      booking_date: dayjs(eventData?.metadata?.booking?.booking_date).format('YYYY-MM-DD'),
+      selected_date: dayjs(eventData?.metadata?.booking?.selected_date).format('YYYY-MM-DD'),
     }
 
     let newBooking: Booking = {
@@ -146,9 +147,23 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
   }
 
   const onChangeBookingDate = (value: Dayjs) => {
-    updateBooking({
-      booking_date: value.format('YYYY-MM-DD'),
-    });
+    console.log('current booking:: ', selectedUpdateBooking);
+
+    let newBooking: Booking = {
+      ...selectedUpdateBooking,
+      selected_date: value.format('YYYY-MM-DD'),
+      booking_services: selectedUpdateBooking?.booking_services.map((bookingService: BookingService) => {
+        let newStart = dayjs(bookingService.start_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
+        let newEnd = dayjs(bookingService.end_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
+        return {
+          ...bookingService,
+          start_at: newStart,
+          end_at: newEnd,
+          selected_date: value.format('YYYY-MM-DD'),
+        }
+      }),
+    }
+    setSelectedUpdateBooking(newBooking);
   }
 
   const renderBookingServices = () => {
@@ -166,7 +181,7 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
 
   return (
     <Modal
-      title="Update Booking"
+      title={`Update Booking #${selectedUpdateBooking?.id}`}
       open={open}
       onCancel={onCloseModal}
       footer={[
@@ -190,8 +205,8 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
           {
             selectedUpdateBooking?.customer ?
               <CustomerCard
-                name={selectedUpdateBooking?.customer.name}
-                phoneNumber={selectedUpdateBooking?.customer.phone}
+                name={selectedUpdateBooking?.customer.full_name}
+                phoneNumber={selectedUpdateBooking?.customer?.phone_number}
                 onClose={handleRemoveCustomer}
               />
               :
@@ -203,10 +218,10 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
           className='w-full mb-2'
         >
           <DatePicker
-            defaultValue={dayjs(selectedUpdateBooking?.booking_date)}
+            defaultValue={dayjs(selectedUpdateBooking?.selected_date)}
             format={'dddd, MMMM D, YYYY'}
             className='w-full'
-            value={dayjs(selectedUpdateBooking?.booking_date)}
+            value={dayjs(selectedUpdateBooking?.selected_date)}
             onChange={onChangeBookingDate}
           />
         </Space>

@@ -12,7 +12,7 @@ export interface Salon {
   updated_at: string;
 }
 
-export interface Technician {
+export interface Employee {
   id: any;
   name: string;
   avatar?: string;
@@ -20,8 +20,8 @@ export interface Technician {
 
 export interface Customer {
   id: any;
-  name: string;
-  phone: string;
+  full_name: string;
+  phone_number: string;
   email: string;
 }
 
@@ -29,32 +29,12 @@ export interface Service {
   id: any;
   name: string;
   price: number;
+  description?: string;
   duration: number;
-}
+  original_price?: number;
+  is_active?: boolean;
+  deduction_cost?: number;
+  category?: string;
+  video_url?: string;
 
-export interface BookingService {
-  id: any;
-  service: Service | null;
-  technician: Technician | null;
-  price: number | null;
-  duration: number | null;
-  is_requested: boolean;
-  start_at: string | null;
-  end_at: string | null;
-  booking_date: string;
-}
-
-
-export interface Booking {
-  id?: any;
-  booking_services: BookingService[];
-  customer: Customer | null;
-  total_price: number;
-  total_duration: number;
-  status: 'pending' | 'confirmed' | 'cancelled';
-  notes: string;
-  payment_method: string;
-  payment_status: string;
-  booking_date: string;
-  
 }

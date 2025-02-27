@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Drawer, TimePicker, Button, Space } from 'antd';
 import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
-import { Booking } from '@/interfaces/salon';
+import { Booking } from '@/interfaces/booking';
 
 interface SelectBookingTimeDrawerProps {
   open: boolean;

@@ -1,9 +1,11 @@
-import { BookingService, Booking, Customer } from '@/interfaces/salon';
+import { BookingService, Booking } from '@/interfaces/booking';
+import { Customer } from '@/interfaces/salon';
 import { create } from 'zustand';
 import dayjs from 'dayjs';
 import { generateTimestampNumber } from '@/utils/helpers';
 import { DayPilot } from 'daypilot-pro-react';
-
+import { bookingAPI } from '@/apis/bookingAPI';
+import { CalendarBookingParams } from '@/interfaces/booking';
 
 export interface BookingServiceStore {
   booking: Booking;
@@ -23,11 +25,12 @@ export interface BookingServiceStore {
   resetSelectedUpdateBooking: () => void;
   updateBookingService: (bookingService: BookingService) => void;
 
-  addBookingEvent: (booking: Booking) => void;
   setSelectedUpdateBooking: (selectedUpdateBooking: Booking) => void;
   updateSelectedUpdateBooking: (booking: Booking) => void;
 
   addSalonBooking: (booking: Booking) => void;
+  setBooking: (booking: Booking) => void;
+  getCalendarBookings: (params: CalendarBookingParams) => void;
 }
 
 export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
@@ -41,7 +44,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     notes: '',
     payment_method: '',
     payment_status: '',
-    booking_date: '',
+    selected_date: '',
   },
   salonBookings: [],
   salonBookingServices: [],
@@ -54,7 +57,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     notes: '',
     payment_method: '',
     payment_status: '',
-    booking_date: '',
+    selected_date: '',
   },
   calendarBookingEvents: [],
 
@@ -80,7 +83,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     set((state) => ({
       booking: {
         ...state.booking,
-        booking_date: bookingDatetime,
+          selected_date: bookingDatetime,
         booking_services: [ ]
       }
     }))
@@ -129,79 +132,6 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     })
   },
 
-  addBookingEvent: (booking: Booking) => {
-    
-    // 1.transform booking to bookingEvent
-    // const bookingServices = [...booking.booking_services]
-
-    // let bookingEvent: DayPilot.EventData[] = []
-    
-    // bookingEvent = booking.booking_services.map((bookingService) => {
-    //   const bookingEventItem: DayPilot.EventData = {
-    //     id: bookingService.id,
-    //     text: "",
-    //     start: new DayPilot.Date(bookingService?.start_at || ''),
-    //     end: new DayPilot.Date(bookingService?.end_at || ''),
-    //     backColor: "#ffd966", // Yellow background
-    //     borderColor: "darker",
-    //     cssClass: "event-with-areas",
-    //     resource: bookingService.technician?.id || '',
-    //     metadata: {
-    //       booking_service: bookingService,
-    //       booking: booking
-    //     },
-    //     areas: [
-    //       {
-    //         left: 0,
-    //         text: `${dayjs(bookingService.start_at).format('HH:mm')} ~ ${dayjs(bookingService.end_at).format('HH:mm')}`,
-    //         padding: 2,
-    //         height: 20,
-    //       },
-    //       {
-    //         right: 0,
-    //         image: bookingService.is_requested ? "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Heart_coraz%C3%B3n.svg/1200px-Heart_coraz%C3%B3n.svg.png" : "",
-    //         width: 20,
-    //         height: 20,
-    //         symbol: "circle",
-    //         padding: 2,
-    //         onClick: () => {
-    //           console.log('clicked heart request');
-    //         }
-    //       },
-    //       {
-    //         left: 0,
-    //         top: 20,
-    //         html: `<div style='font-size: 12px;font-weight:bold;'>${booking.customer?.name || ''}</div>`,
-    //         padding: 2,
-    //         height: 20,
-    //       },
-    //       {
-    //         left: 0,
-    //         bottom: 0,
-    //         top: 40,
-    //         text: `${bookingService.service?.name}`,
-    //         padding: 2,
-    //         height: 20,
-    //       }
-    //     ]
-    //   }
-    //   // bookingEvent.push(bookingEventItem)
-    //   return bookingEventItem
-    // })  
-
-    // console.log('bookingEvent:: ', bookingEvent);
-
-
-    // set((state) => ({
-    //   calendarBookingEvents: [...state.calendarBookingEvents, ...bookingEvent],
-    //   booking: {
-    //     ...state.booking,
-    //     booking_services: booking.booking_services,
-    //     booking_date: dayjs(booking.booking_date).format('YYYY-MM-DD')
-    //   }
-    // }))
-  },
-
   addSalonBooking: (booking: Booking) => set((state) => ({
     salonBookings: [...state.salonBookings, booking],
     salonBookingServices: [...state.salonBookingServices, ...booking.booking_services]
@@ -212,7 +142,6 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
   })),
 
   updateSelectedUpdateBooking: (booking: Booking) => {
-   
     set((state) => ({
       salonBookings: state.salonBookings.map((salonBooking) => {
         if (salonBooking.id === booking.id) {
@@ -223,6 +152,21 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     }))
   },
 
-  
+  setBooking: (booking: Booking) => set((state) => ({
+    booking: booking
+  })),
+
+  getCalendarBookings: async (params: CalendarBookingParams) => {
+    try {
+      const response = await bookingAPI.getCalendarBookings(params);
+      console.log('calendarBookings:: ', response.data.data);
+      set((state) => ({
+        salonBookings: response.data.data
+      }))
+    } catch (error) {
+      console.error('Error fetching calendar bookings:', error);
+    }
+  }
+
 
 }));
