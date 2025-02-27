@@ -24,6 +24,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => {
     // Handle request error
+    console.error('Request error:', error.response.data);
     return Promise.reject(error);
   }
 );
@@ -41,6 +42,9 @@ axiosInstance.interceptors.response.use(
       console.error('Unauthorized, redirecting to login...');
       // window.location.href = '/auth/signin';
     }
+
+    console.error('Response error:', error.response.data);
+    
     return Promise.reject(error);
   }
 );

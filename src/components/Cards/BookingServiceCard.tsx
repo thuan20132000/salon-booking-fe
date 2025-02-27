@@ -172,7 +172,7 @@ const BookingServiceCard: React.FC<BookingServiceCardProps> = ({
               size="small"
               placeholder="technician"
               onClick={() => setIsShowSelectTechnician(true)}
-              value={bookingService.employee?.name}
+              value={bookingService.employee?.nick_name}
               prefix={<UserOutlined />}
               prefixCls="custom-prefix"
               suffix={

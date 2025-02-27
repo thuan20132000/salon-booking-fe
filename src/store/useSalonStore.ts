@@ -1,43 +1,98 @@
 import { create } from 'zustand';
-import { Salon, Technician, Service } from '../interfaces/salon';
+import { Salon, Employee, Service, Customer } from '../interfaces/salon';
 import { SALON, SALON_TECHNICIANS, SALON_SERVICES } from '../dummy/salon';
+import { salonAPI } from '@/apis/salonAPI';
 
 export interface SalonState {
   selectedSalon: Salon | null;
   isLoading: boolean;
   error: string | null;
-  salonTechnicians: Technician[];
+  salonTechnicians: Employee[];
   salonServices: Service[];
-  
+  salonCustomers: Customer[];
+
   // Actions
   setSelectedSalon: (salon: Salon | null) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
-  setSalonTechnicians: (technicians: Technician[]) => void;
+  setSalonTechnicians: (technicians: Employee[]) => void;
   setSalonServices: (services: Service[]) => void;
   initSalonData: () => void;
+  getSalonTechnicians: () => Promise<Employee[]>;
+  getSalonServices: () => Promise<Service[]>;
+  getSalonCustomers: () => Promise<Customer[]>;
 }
 
-export const useSalonStore = create<SalonState>((set) => ({
+export const useSalonStore = create<SalonState>((set, get) => ({
   // Initial state
-  selectedSalon: null,
+  selectedSalon: {
+    id: 1,
+    name: 'Salon 1',
+    address: '123 Main St',
+    phone: '123-456-7890',
+    email: 'salon1@example.com',
+    website: 'https://www.salon1.com',
+    logo: 'https://www.salon1.com/logo.png',
+    description: 'Salon 1 description',
+    created_at: '2021-01-01',
+    updated_at: '2021-01-01',
+  },
   isLoading: false,
   error: null,
   salonTechnicians: [],
   salonServices: [],
+  salonCustomers: [],
+
   // Actions
   setSelectedSalon: (salon) => set({ selectedSalon: salon }),
   setIsLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
   setSalonTechnicians: (technicians) => set({ salonTechnicians: technicians }),
   setSalonServices: (services) => set({ salonServices: services }),
-  initSalonData: () => {
-    set({
-      selectedSalon: SALON,
-      salonTechnicians: SALON_TECHNICIANS,
-      salonServices: SALON_SERVICES,
-      isLoading: false,
-      error: null,
-    });
+  initSalonData: async () => {
+    try {
+      const technicians = await get().getSalonTechnicians();
+      const selectedSalon = get().selectedSalon;
+      const services = await get().getSalonServices();
+      const customers = await get().getSalonCustomers();
+    
+      set({
+        selectedSalon: selectedSalon,
+        salonTechnicians: technicians,
+        salonServices: services,
+        salonCustomers: customers,
+        isLoading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error('Error initializing salon data:', error);
+    }
   },
+
+  getSalonTechnicians: async (): Promise<Employee[]> => {
+    // get selected salon id
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.getSalonEmployees({
+      salon_id: selectedSalon?.id,
+    });
+    return response.data.data;
+  },
+
+  getSalonServices: async (): Promise<Service[]> => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.getSalonServices({
+      salon_id: selectedSalon?.id,
+    });
+   
+    return response.data.data;
+  },
+
+  getSalonCustomers: async (): Promise<Customer[]> => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.getSalonCustomers({
+      salon_id: selectedSalon?.id,
+    });
+    return response.data.data;
+  },
+
 }));

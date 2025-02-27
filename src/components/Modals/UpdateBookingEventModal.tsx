@@ -61,7 +61,7 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
 
     let newBooking: Booking = {
       ...selectedUpdateBooking,
-      booking_services: [...selectedUpdateBooking?.booking_services, newBookingService],
+      booking_services: [...(selectedUpdateBooking?.booking_services || []), newBookingService],
     }
 
     setSelectedUpdateBooking(newBooking);
@@ -129,6 +129,7 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
   useEffect(() => {
 
     if (open) {
+      console.log('eventData booking:: ', eventData?.metadata?.booking);
       setSelectedUpdateBooking(eventData?.metadata?.booking);
     }
 
@@ -152,7 +153,7 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
     let newBooking: Booking = {
       ...selectedUpdateBooking,
       selected_date: value.format('YYYY-MM-DD'),
-      booking_services: selectedUpdateBooking?.booking_services.map((bookingService: BookingService) => {
+      booking_services: selectedUpdateBooking?.booking_services?.map((bookingService: BookingService) => {
         let newStart = dayjs(bookingService.start_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
         let newEnd = dayjs(bookingService.end_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
         return {
@@ -167,7 +168,7 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
   }
 
   const renderBookingServices = () => {
-    return selectedUpdateBooking?.booking_services.map((bookingService: BookingService) => (
+    return selectedUpdateBooking?.booking_services?.map((bookingService: BookingService) => (
       <BookingServiceCard
         key={bookingService?.id}
         initialDateTime={dayjs(bookingService.start_at)}
@@ -178,6 +179,8 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
       />
     ))
   }
+
+  console.log('selectedUpdateBooking:: ', selectedUpdateBooking);
 
   return (
     <Modal

@@ -26,7 +26,6 @@ const ResourceCalendar = (props: any) => {
     isShowUpdateBookingEvent,
     setIsShowUpdateBookingEvent,
     selectedUpdateEvent,
-    onCalendarEventClick,
     getTransformedCalendarBookingEvents,
     handleCalendarEventMoved,
     handleCalendarEventResize,
@@ -52,6 +51,7 @@ const ResourceCalendar = (props: any) => {
         visible={view === "Day"}
         // durationBarVisible={true}
         cellDuration={15}
+        
         onTimeRangeSelected={onTimeRangeSelected}
 
         columns={getTechnicianColumns()}

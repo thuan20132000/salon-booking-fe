@@ -1,4 +1,4 @@
-import { BookingService, Booking } from '@/interfaces/booking';
+import { BookingService, Booking, UpdateBookingType, CreateBookingType } from '@/interfaces/booking';
 import { Customer } from '@/interfaces/salon';
 import { create } from 'zustand';
 import dayjs from 'dayjs';
@@ -6,7 +6,7 @@ import { generateTimestampNumber } from '@/utils/helpers';
 import { DayPilot } from 'daypilot-pro-react';
 import { bookingAPI } from '@/apis/bookingAPI';
 import { CalendarBookingParams } from '@/interfaces/booking';
-
+import { useSalonStore } from './useSalonStore';
 export interface BookingServiceStore {
   booking: Booking;
   salonBookings: Booking[];
@@ -31,6 +31,12 @@ export interface BookingServiceStore {
   addSalonBooking: (booking: Booking) => void;
   setBooking: (booking: Booking) => void;
   getCalendarBookings: (params: CalendarBookingParams) => void;
+
+  // booking api actions
+  createSalonBooking: (booking: CreateBookingType) => void;
+  // updateSalonBooking: (booking: UpdateBookingType) => void;
+  // deleteSalonBooking: (id: number) => void;
+  // getSalonBooking: (id: number) => void;
 }
 
 export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
@@ -40,7 +46,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     customer: null,
     total_price: 0,
     total_duration: 0,
-    status: 'pending',
+    status: 'scheduled',
     notes: '',
     payment_method: '',
     payment_status: '',
@@ -53,7 +59,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     customer: null,
     total_price: 0,
     total_duration: 0,
-    status: 'pending',
+    status: 'scheduled',
     notes: '',
     payment_method: '',
     payment_status: '',
@@ -71,7 +77,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
   })),
 
   removeBooking: (id) => set((state) => ({
-    booking: { ...state.booking, booking_services: state.booking.booking_services.filter((bookingService) => bookingService.service?.id !== id) }
+    booking: { ...state.booking, booking_services: state.booking?.booking_services?.filter((bookingService) => bookingService.service?.id !== id) || [] }
   })),
 
   initBookingServices: (initialEvent?: DayPilot.CalendarTimeRangeSelectedArgs | null) => {
@@ -83,14 +89,14 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     set((state) => ({
       booking: {
         ...state.booking,
-          selected_date: bookingDatetime,
-        booking_services: [ ]
+        selected_date: bookingDatetime,
+        booking_services: []
       }
     }))
   },
 
   addBookingService: (bookingService) => set((state) => ({
-    booking: { ...state.booking, booking_services: [...state.booking.booking_services, bookingService] }
+    booking: { ...state.booking, booking_services: [...(state.booking?.booking_services || []), bookingService] }
   })),
 
   addBookingCustomer: (customer) => set((state) => ({
@@ -102,7 +108,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
   })),
 
   removeBookingService: (id: number) => set((state) => ({
-    booking: { ...state.booking, booking_services: state.booking.booking_services.filter((bookingService) => bookingService.id !== id) }
+    booking: { ...state.booking, booking_services: state.booking?.booking_services?.filter((bookingService) => bookingService.id !== id) || [] }
   })),
 
   resetBooking: () => set((state) => {
@@ -125,31 +131,100 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
 
   updateBookingService: (bookingService) => {
     set((state) => {
-      const updatedBookingServices = state.booking.booking_services.map((service) => service.id === bookingService.id ? bookingService : service);
+      const updatedBookingServices = state.booking?.booking_services?.map((service) => service.id === bookingService.id ? bookingService : service);
       return {
         booking: { ...state.booking, booking_services: updatedBookingServices }
       }
     })
   },
 
-  addSalonBooking: (booking: Booking) => set((state) => ({
-    salonBookings: [...state.salonBookings, booking],
-    salonBookingServices: [...state.salonBookingServices, ...booking.booking_services]
-  })),
+  // add salon booing to store and create booking in db
+  addSalonBooking: async (booking: Booking) => {
+
+    try {
+      
+      const selectedSalon = useSalonStore.getState().selectedSalon;
+      if (!selectedSalon) {
+        throw new Error('Salon not selected');
+      }
+
+      // create booking in db
+      let createBooking: CreateBookingType = {
+        customer: booking.customer?.id,
+        services: booking?.booking_services?.map((bookingService) => ({
+          service_id: bookingService.service?.id,
+          employee_id: bookingService.employee?.id,
+          start_at: bookingService.start_at || '',
+          end_at: bookingService.end_at || '',
+          is_requested: bookingService.is_requested || false,
+          price: bookingService.price || 0,
+          duration: bookingService.duration || 0,
+          notes: bookingService.notes || '',
+          status: bookingService.status || 'pending',
+          
+        })),
+        notes: booking?.notes || '',
+        status: booking?.status || 'pending',
+        salon: selectedSalon.id,
+        selected_date: dayjs(booking?.selected_date).format('YYYY-MM-DD'),
+      }
+      const response = await bookingAPI.createBooking(createBooking);
+      console.log('createBooking:: ', response.data.data);
+      const createdBooking = response.data.data;
+      
+      // add booking to store
+      set((state) => ({
+        salonBookings: [...state.salonBookings, createdBooking],
+      }))
+
+    } catch (error) {
+      console.error('Error creating booking:', error);
+    }
+
+  },
 
   setSelectedUpdateBooking: (selectedUpdateBooking: Booking) => set((state) => ({
     selectedUpdateBooking: selectedUpdateBooking
   })),
 
-  updateSelectedUpdateBooking: (booking: Booking) => {
-    set((state) => ({
-      salonBookings: state.salonBookings.map((salonBooking) => {
+  updateSelectedUpdateBooking: async (booking: Booking) => {
+
+    try {
+       // update booking in db
+       const updateBooking = {
+        id: booking.id,
+        customer: booking.customer?.id,
+        services: booking?.booking_services?.map((bookingService) => ({
+          service_id: bookingService.service?.id,
+          employee_id: bookingService.employee?.id,
+          start_at: bookingService.start_at || '',
+          end_at: bookingService.end_at || '',
+          is_requested: bookingService.is_requested || false,
+          price: bookingService.price || 0,
+          duration: bookingService.duration || 0,
+          notes: bookingService.notes || '',
+          status: bookingService.status || '',
+        })),
+        notes: booking?.notes || '',
+        status: booking?.status || '',
+      } as UpdateBookingType;
+
+      const response = await bookingAPI.updateBooking(updateBooking);
+
+      console.log('updatedBooking:: ', response.data.data);
+
+      // update booking in store
+      set((state) => ({
+        salonBookings: state.salonBookings.map((salonBooking) => {
         if (salonBooking.id === booking.id) {
           return booking;
-        }
-        return salonBooking;
-      })
-    }))
+          }
+          return salonBooking;
+        })
+      }))
+    } catch (error) {
+      console.error('Error updating booking:', error);
+    }
   },
 
   setBooking: (booking: Booking) => set((state) => ({
@@ -166,7 +241,15 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     } catch (error) {
       console.error('Error fetching calendar bookings:', error);
     }
-  }
+  },
 
+  createSalonBooking: async (booking: CreateBookingType) => {
+    try {
+      const response = await bookingAPI.createBooking(booking);
+      console.log('createdBooking:: ', response.data.data);
+    } catch (error) {
+      console.error('Error creating booking:', error);
+    }
+  }
 
 }));

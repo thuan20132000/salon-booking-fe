@@ -16,13 +16,18 @@ export interface Employee {
   id: any;
   name: string;
   avatar?: string;
+  nick_name?: string;
 }
 
 export interface Customer {
   id: any;
   full_name: string;
   phone_number: string;
-  email: string;
+  email?: string;
+  address?: string;
+  birth_date?: string;
+  gender?: string;
+  salon?: number;
 }
 
 export interface Service {
@@ -37,4 +42,15 @@ export interface Service {
   category?: string;
   video_url?: string;
 
+}
+
+export interface SalonEmployeeParams {
+  salon_id?: number;
+  employee_id?: number;
+}
+
+export interface SalonParams {
+  salon_id?: number;
+  employee_id?: number;
+  service_id?: number;
 }

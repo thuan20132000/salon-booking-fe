@@ -11,6 +11,13 @@ import Signin from "./auth/signin/page";
 import useAuthenticationStore from "@/store/useAuthenticationStore";
 import { AuthenticationState } from '../store/useAuthenticationStore';
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('America/Toronto');
 
 export default function RootLayout({
   children,
@@ -30,7 +37,7 @@ export default function RootLayout({
 
   useEffect(() => {
     const isAuth = checkAuth()
-    console.log(isAuth)
+      console.log(isAuth)
     if (!isAuth) {
       router.replace('/auth/signin');
     } else {
@@ -38,6 +45,7 @@ export default function RootLayout({
     }
 
   }, [isAuthenticated, router, checkAuth])
+
 
 
   return (

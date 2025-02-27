@@ -15,8 +15,12 @@ export const bookingAPI = {
         start_date: params.start_date,
         end_date: params.end_date,
         salon_id: params.salon_id,
+        selected_date: params.selected_date,
       }
     }),
   createBooking: (booking: CreateBookingType) => axiosInstance.post<ApiResponse<Booking>>('/bookings/', booking),
-  updateBooking: (booking: UpdateBookingType) => axiosInstance.put<ApiResponse<Booking>>('/bookings/', booking),
+  updateBooking: (booking: UpdateBookingType) =>
+    axiosInstance.put<ApiResponse<Booking>>(`/bookings/${booking.id}/`, booking),
+  deleteBooking: (id: number) => axiosInstance.delete<ApiResponse<Booking>>(`/bookings/${id}/`),
+  getBooking: (id: number) => axiosInstance.get<ApiResponse<Booking>>(`/bookings/${id}/`),
 };

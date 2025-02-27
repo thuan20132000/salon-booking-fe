@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Drawer, Input, List, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { Service } from '@/interfaces/salon';
 import SalonServiceCard from '../Cards/SalonServiceCard';
-
-const { Item } = List;
+import { useSalonStore, SalonState } from '@/store/useSalonStore';
 
 interface SelectBookingServiceDrawerProps {
   open: boolean;
@@ -19,22 +18,16 @@ const SelectBookingServiceDrawer: React.FC<SelectBookingServiceDrawerProps> = ({
   onClose,
   onSelectService,
 }) => {
-  const sampleServices: Service[] = [
-    { id: 1, name: 'Haircut', duration: 30, price: 35 },
-    { id: 2, name: 'Hair Coloring', duration: 120, price: 120 },
-    { id: 3, name: 'Manicure', duration: 60, price: 40 },
-    { id: 4, name: 'Pedicure', duration: 60, price: 50 },
-    { id: 5, name: 'Facial Treatment', duration: 60, price: 80 },
-    { id: 6, name: 'Massage', duration: 60, price: 90 },
-    { id: 7, name: 'Waxing', duration: 30, price: 45 },
-
-  ];
+  const {
+    salonServices,
+  } = useSalonStore((state: SalonState) => state);
+  
   const [searchText, setSearchText] = useState('');
-  const [filteredServices, setFilteredServices] = useState(sampleServices);
+  const [filteredServices, setFilteredServices] = useState(salonServices);
 
   const handleSearch = (value: string) => {
     setSearchText(value);
-    const filtered = sampleServices.filter((service) =>
+    const filtered = salonServices.filter((service) =>
       service.name.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredServices(filtered);

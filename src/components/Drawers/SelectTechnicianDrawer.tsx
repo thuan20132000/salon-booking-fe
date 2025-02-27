@@ -22,7 +22,7 @@ const SelectTechnicianDrawer: React.FC<SelectTechnicianDrawerProps> = ({
   const handleSearch = (value: string) => {
     setSearchText(value);
     const filtered = salonTechnicians.filter((tech) =>
-      tech.name.toLowerCase().includes(value.toLowerCase())
+      tech.nick_name?.toLowerCase().includes(value.toLowerCase())
     );
     setTechnicians(filtered);
   };
@@ -54,10 +54,10 @@ const SelectTechnicianDrawer: React.FC<SelectTechnicianDrawerProps> = ({
             <List.Item.Meta
               avatar={
                 <Avatar src={technician.avatar}>
-                  {technician.name.charAt(0)}
+                  {technician.nick_name?.charAt(0)}
                 </Avatar>
               }
-              title={technician.name}
+              title={technician.nick_name}
             />
           </List.Item>
         )}

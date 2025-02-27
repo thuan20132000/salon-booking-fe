@@ -35,7 +35,6 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
     removeBookingService,
     resetBooking,
     updateBookingService,
-    updateBooking,
     addSalonBooking,
     setBooking,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
@@ -125,7 +124,7 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
     let newBooking: Booking = {
       ...booking,
       selected_date: value.format('YYYY-MM-DD'),
-      booking_services: booking.booking_services.map((bookingService: BookingService) => {
+      booking_services: booking?.booking_services?.map((bookingService: BookingService) => {
         let newStart = dayjs(bookingService.start_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
         let newEnd = dayjs(bookingService.end_at).set('date', value.date()).format('YYYY-MM-DD HH:mm:ss');
         return {
@@ -138,6 +137,9 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
     }
     setBooking(newBooking);
   }
+
+  console.log('selected_date:: ', booking.selected_date);
+  console.log('booking:: ', booking);
 
   return (
     <Modal
@@ -177,17 +179,21 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
           direction='vertical'
           className='w-full mb-2'
         >
-          <DatePicker
-            defaultValue={dayjs(booking.selected_date)}
-            format={'dddd, MMMM D, YYYY'}
-            className='w-full'
-            value={dayjs(booking.selected_date)}
-            onChange={onChangeBookingDate}
-          />
+          {
+            booking.selected_date && (
+              <DatePicker
+                defaultValue={dayjs(booking.selected_date)}
+                format={'dddd, MMMM D, YYYY'}
+                className='w-full'
+                value={dayjs(booking.selected_date)}
+                onChange={onChangeBookingDate}
+              />
+            )
+          }
         </Space>
 
         <Space direction='vertical' className='w-full'>
-          {booking.booking_services.map((bookingService, index) => (
+          {booking?.booking_services?.map((bookingService, index) => (
             <BookingServiceCard
               key={bookingService?.id}
               initialDateTime={dayjs(bookingService.start_at)}
@@ -211,7 +217,7 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
           open={isShowSelectBookingService}
           onClose={handleCancelSelectBookingService}
           onSelectService={handleSelectBookingService}
-          
+
         />
 
         <SelectSalonCustomerDrawer

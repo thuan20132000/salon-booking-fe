@@ -44,7 +44,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
     getCalendarBookings,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
 
-  const { salonTechnicians, salonServices } = useSalonStore((state: SalonState) => state);
+  const { salonTechnicians, salonServices, selectedSalon } = useSalonStore((state: SalonState) => state);
 
   const [view, setView] = useState("Day");
   const [startDate, setStartDate] = useState(DayPilot.Date.today());
@@ -88,9 +88,9 @@ export const useResourceCalendar = (): UseResourceCalendar => {
 
     const newBooking: Booking = {
       ...booking,
-      booking_services: booking.booking_services.map((bs) => bs.id === bookingService.id ? newBookingService : bs),
+      booking_services: booking?.booking_services?.map((bs) => bs.id === bookingService.id ? newBookingService : bs),
     }
-    
+
     updateSelectedUpdateBooking(newBooking);
   };
 
@@ -109,12 +109,12 @@ export const useResourceCalendar = (): UseResourceCalendar => {
 
     const newBooking: Booking = {
       ...booking,
-      booking_services: booking.booking_services.map((bs) => bs.id === bookingService.id ? newBookingService : bs),
+      booking_services: booking?.booking_services?.map((bs) => bs.id === bookingService.id ? newBookingService : bs),
     }
 
     updateSelectedUpdateBooking(newBooking);
-    
-    
+
+
   };
 
   const handleCalendarEventClick = (args: DayPilot.CalendarEventClickArgs) => {
@@ -135,15 +135,21 @@ export const useResourceCalendar = (): UseResourceCalendar => {
 
 
     salonBookings.forEach((booking) => {
-      booking.booking_services.forEach((bookingService) => {
+      booking?.booking_services?.forEach((bookingService) => {
+        // let start_at = dayjs(bookingService?.start_at || '').tz('UTC').format('YYYY-MM-DDTHH:mm:ss')
+        // let end_at = dayjs(bookingService?.end_at || '').tz('UTC').format('YYYY-MM-DDTHH:mm:ss')
+
+        let start_at = new DayPilot.Date(bookingService?.start_at || '')
+        let end_at = new DayPilot.Date(bookingService?.end_at || '')
+
+
         bookingEvents.push({
           id: bookingService.id,
           text: "",
-          start: new DayPilot.Date(bookingService?.start_at || ''),
-          end: new DayPilot.Date(bookingService?.end_at || ''),
+          start: start_at,
+          end: end_at,
           backColor: "#ffd966", // Yellow background
           borderColor: "darker",
-          cssClass: "event-with-areas",
           resource: bookingService.employee?.id || '',
           metadata: {
             booking_service: bookingService,
@@ -152,7 +158,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
           areas: [
             {
               left: 0,
-              text: `${dayjs(bookingService.start_at).format('HH:mm')} ~ ${dayjs(bookingService.end_at).format('HH:mm')}`,
+              text: `${start_at.toString('HH:mm')} ~ ${end_at.toString('HH:mm')} #${booking.id}`,
               padding: 2,
               height: 20,
             },
@@ -180,13 +186,11 @@ export const useResourceCalendar = (): UseResourceCalendar => {
               top: 40,
               text: `${bookingService.service?.name}`,
               padding: 2,
-              height: 20,
             }
           ]
         })
       })
     })
-
     return bookingEvents;
   }, [salonBookings])
 
@@ -196,10 +200,10 @@ export const useResourceCalendar = (): UseResourceCalendar => {
   // transform technician columns to DayPilot.CalendarColumnData
   const getTechnicianColumns = useCallback(() => {
     const transformedColumns: DayPilot.CalendarColumnData[] = salonTechnicians.map((technician) => ({
-      name: technician.name,
+      name: technician.nick_name || technician.name,
       id: technician.id,
       image: technician.avatar,
-      tooltip: technician.name,
+      tooltip: technician.nick_name || technician.name,
       data: technician,
       expandable: true,
     }));
@@ -208,9 +212,13 @@ export const useResourceCalendar = (): UseResourceCalendar => {
   }, [salonTechnicians, salonServices]);
 
   useEffect(() => {
-    getCalendarBookings({
-      salon_id: 1,
-    });
+    if (startDate) {
+      const selectedDate = dayjs(startDate.toString()).format('YYYY-MM-DD');
+      getCalendarBookings({
+        salon_id: selectedSalon?.id,
+        selected_date: selectedDate,
+      });
+    }
   }, [startDate]);
 
   return {

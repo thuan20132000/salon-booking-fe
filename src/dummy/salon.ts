@@ -1,5 +1,5 @@
 
-import { Salon, Technician, Service, Customer } from '../interfaces/salon';
+import { Salon, Employee, Service, Customer } from '../interfaces/salon';
 
 
 // generate 6 salons dummy from Salon interface
@@ -18,7 +18,7 @@ export const SALON: Salon = {
 
 
 // generate 6 technicians dummy from Technician interface
-export const SALON_TECHNICIANS: Technician[] = [
+export const SALON_TECHNICIANS: Employee[] = [
   { id: 1, name: 'Jonathan', avatar: 'https://via.placeholder.com/150' },
   { id: 2, name: 'Ethan', avatar: 'https://via.placeholder.com/150' },
   { id: 3, name: 'John', avatar: 'https://via.placeholder.com/150' },
@@ -156,74 +156,74 @@ export const SALON_SERVICES: Service[] = [
 export const SALON_CUSTOMERS: Customer[] = [
   {
     id: 1,
-    name: "Sarah Johnson",
-    phone: "555-123-4567",
+    full_name: "Sarah Johnson",
+    phone_number: "555-123-4567",
     email: "sarah.j@email.com"
   },
   {
     id: 2,
-    name: "Michael Chen",
-    phone: "555-234-5678",
+    full_name: "Michael Chen",
+    phone_number: "555-234-5678",
     email: "mchen@email.com"
   },
   {
     id: 3,
-    name: "Emily Rodriguez",
-    phone: "555-345-6789",
+    full_name: "Emily Rodriguez",
+    phone_number: "555-345-6789",
     email: "emily.r@email.com"
   },
   {
     id: 4,
-    name: "James Wilson",
-    phone: "555-456-7890",
+    full_name: "James Wilson",
+    phone_number: "555-456-7890",
     email: "jwilson@email.com"
   },
   {
     id: 5,
-    name: "Lisa Thompson",
-    phone: "555-567-8901",
+    full_name: "Lisa Thompson",
+    phone_number: "555-567-8901",
     email: "lisa.t@email.com"
   },
   {
     id: 6,
-    name: "David Kim",
-    phone: "555-678-9012",
+    full_name: "David Kim",
+    phone_number: "555-678-9012",
     email: "dkim@email.com"
   },
   {
     id: 7,
-    name: "Jessica Patel",
-    phone: "555-789-0123",
+    full_name: "Jessica Patel",
+    phone_number: "555-789-0123",
     email: "jpatel@email.com"
   },
   {
     id: 8,
-    name: "Robert Martinez",
-    phone: "555-890-1234",
+    full_name: "Robert Martinez",
+    phone_number: "555-890-1234",
     email: "rmartinez@email.com"
   },
   {
     id: 9,
-    name: "Amanda Lee",
-    phone: "555-901-2345",
+    full_name: "Amanda Lee",
+    phone_number: "555-901-2345",
     email: "alee@email.com"
   },
   {
     id: 10,
-    name: "Thomas Brown",
-    phone: "555-012-3456",
+    full_name: "Thomas Brown",
+    phone_number: "555-012-3456",
     email: "tbrown@email.com"
   },
   {
     id: 11,
-    name: "Maria Garcia",
-    phone: "555-234-5678",
+    full_name: "Maria Garcia",
+    phone_number: "555-234-5678",
     email: "mgarcia@email.com"
   },
   {
     id: 12,
-    name: "Jennifer Wong",
-    phone: "555-345-6789",
+    full_name: "Jennifer Wong",
+    phone_number: "555-345-6789",
     email: "jwong@email.com"
   }
 ];
