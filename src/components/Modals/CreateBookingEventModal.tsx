@@ -138,8 +138,6 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
     setBooking(newBooking);
   }
 
-  console.log('selected_date:: ', booking.selected_date);
-  console.log('booking:: ', booking);
 
   return (
     <Modal

@@ -148,7 +148,6 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
   }
 
   const onChangeBookingDate = (value: Dayjs) => {
-    console.log('current booking:: ', selectedUpdateBooking);
 
     let newBooking: Booking = {
       ...selectedUpdateBooking,
@@ -180,7 +179,6 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
     ))
   }
 
-  console.log('selectedUpdateBooking:: ', selectedUpdateBooking);
 
   return (
     <Modal

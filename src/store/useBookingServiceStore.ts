@@ -81,10 +81,8 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
   })),
 
   initBookingServices: (initialEvent?: DayPilot.CalendarTimeRangeSelectedArgs | null) => {
-    console.log('initialEvent:: ', initialEvent?.start.toString());
 
     const bookingDatetime = dayjs(initialEvent?.start.toString()).format('YYYY-MM-DD HH:mm:ss');
-    console.log('bookingDatetime:: ', bookingDatetime);
 
     set((state) => ({
       booking: {
@@ -234,7 +232,6 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
   getCalendarBookings: async (params: CalendarBookingParams) => {
     try {
       const response = await bookingAPI.getCalendarBookings(params);
-      console.log('calendarBookings:: ', response.data.data);
       set((state) => ({
         salonBookings: response.data.data
       }))
@@ -246,7 +243,6 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
   createSalonBooking: async (booking: CreateBookingType) => {
     try {
       const response = await bookingAPI.createBooking(booking);
-      console.log('createdBooking:: ', response.data.data);
     } catch (error) {
       console.error('Error creating booking:', error);
     }

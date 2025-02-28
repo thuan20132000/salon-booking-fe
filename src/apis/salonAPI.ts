@@ -25,4 +25,5 @@ export const salonAPI = {
       salon_id: params.salon_id,
     }
   }),
+  createSalonCustomer: (customer: Customer) => axiosInstance.post<ApiResponse<Customer>>(`/salon-customers/`,customer),
 };

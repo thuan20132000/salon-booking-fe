@@ -21,6 +21,7 @@ export interface SalonState {
   getSalonTechnicians: () => Promise<Employee[]>;
   getSalonServices: () => Promise<Service[]>;
   getSalonCustomers: () => Promise<Customer[]>;
+  addSalonCustomer: (customer: Customer) => Promise<Customer>;
 }
 
 export const useSalonStore = create<SalonState>((set, get) => ({
@@ -92,7 +93,17 @@ export const useSalonStore = create<SalonState>((set, get) => ({
     const response = await salonAPI.getSalonCustomers({
       salon_id: selectedSalon?.id,
     });
+    set({ salonCustomers: response.data.data });
     return response.data.data;
   },
 
+  addSalonCustomer: async (customer: Customer) => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.createSalonCustomer({
+      ...customer,
+      salon: selectedSalon?.id,
+    });
+    set({ salonCustomers: [...get().salonCustomers, response.data.data] });
+    return response.data.data;
+  },
 }));
