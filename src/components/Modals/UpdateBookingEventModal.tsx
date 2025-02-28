@@ -129,7 +129,6 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
   useEffect(() => {
 
     if (open) {
-      console.log('eventData booking:: ', eventData?.metadata?.booking);
       setSelectedUpdateBooking(eventData?.metadata?.booking);
     }
 

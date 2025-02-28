@@ -166,49 +166,58 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
 
             {/* Group 1 */}
-              <div key={1}>
-                <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-                  Bookings
-                </h3>
-                <ul className="mb-6 flex flex-col gap-1.5">
-                    <SidebarItem
-                      item={{
-                        icon: <CalendarOutlined />,
-                        label: "Calendar",
-                        route: "/calendar",
-                      }}
-                      pageName={pageName}
-                      setPageName={setPageName}
-                    />
-                </ul>
-              </div>
+            <div key={1}>
+              <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+                Bookings
+              </h3>
+              <ul className="mb-6 flex flex-col gap-1.5">
+                <SidebarItem
+                  item={{
+                    icon: <CalendarOutlined />,
+                    label: "Calendar",
+                    route: "/calendar",
+                  }}
+                  pageName={pageName}
+                  setPageName={setPageName}
+                />
+              </ul>
+            </div>
 
-              {/* Group 2 */}
-              <div key={2}>
-                <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-                  Management
-                </h3>
-                <ul className="mb-6 flex flex-col gap-1.5">
-                  <SidebarItem
-                    item={{
-                      icon: <UserOutlined />,
-                      label: "Customers",
-                      route: "/customers",
-                    }}
-                    pageName={pageName}
-                    setPageName={setPageName}
-                  />
-                   <SidebarItem
-                    item={{
-                      icon: <TeamOutlined />,
-                      label: "Employees",
-                      route: "/employees",
-                    }}
-                    pageName={pageName}
-                    setPageName={setPageName}
-                  />
-                </ul>
-              </div>
+            {/* Group 2 */}
+            <div key={2}>
+              <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+                Management
+              </h3>
+              <ul className="mb-6 flex flex-col gap-1.5">
+                <SidebarItem
+                  item={{
+                    icon: <UserOutlined />,
+                    label: "Customers",
+                    route: "/customers",
+                  }}
+                  pageName={pageName}
+                  setPageName={setPageName}
+                />
+                <SidebarItem
+                  item={{
+                    icon: <TeamOutlined />,
+                    label: "Employees",
+                    route: "/employees",
+                  }}
+                  pageName={pageName}
+                  setPageName={setPageName}
+                />
+                <SidebarItem
+                  item={{
+                    icon: <TeamOutlined />,
+                    label: "Services",
+                    route: "/services",
+                  }}
+                  pageName={pageName}
+                  setPageName={setPageName}
+                />
+              </ul>
+            </div>
           </nav>
           {/* <!-- Sidebar Menu --> */}
         </div>

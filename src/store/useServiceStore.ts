@@ -46,7 +46,6 @@ export const useServiceStore = create<ServiceStore>((set) => ({
   })),
   getServices: async () => {
     const data = await serviceAPI.getServices();
-    console.log('getServices: ', data);
     set({ services: data });
   },
   getServiceCategories: async () => {

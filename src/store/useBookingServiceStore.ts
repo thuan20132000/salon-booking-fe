@@ -167,7 +167,6 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
         selected_date: dayjs(booking?.selected_date).format('YYYY-MM-DD'),
       }
       const response = await bookingAPI.createBooking(createBooking);
-      console.log('createBooking:: ', response.data.data);
       const createdBooking = response.data.data;
       
       // add booking to store
@@ -209,7 +208,6 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
 
       const response = await bookingAPI.updateBooking(updateBooking);
 
-      console.log('updatedBooking:: ', response.data.data);
 
       // update booking in store
       set((state) => ({

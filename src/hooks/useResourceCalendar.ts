@@ -54,7 +54,6 @@ export const useResourceCalendar = (): UseResourceCalendar => {
   const [selectedUpdateEvent, setSelectedUpdateEvent] = useState<DayPilot.EventData | null>(null);
 
   const onTimeRangeSelected = (args: DayPilot.CalendarTimeRangeSelectedArgs) => {
-    console.log('Time range selected:', args)
     setSelectedEvent(args);
     setIsShowAddBookingEvent(true);
   };

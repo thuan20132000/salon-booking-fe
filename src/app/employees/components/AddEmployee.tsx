@@ -39,20 +39,6 @@ const AddEmployee = (props: Props) => {
   }
 
 
-  const onSubmit = async () => {
-    console.log('onSubmit');
-    const values: EmployeeType = await form.validateFields()
-    console.log('values: ', values);
-    // form.resetFields();
-    await addEmployee(values)
-    form.resetFields();
-    setOpen(false);
-    await getEmployees();
-
-
-  }
-
-
   const handleFinish = async () => {
 
     try {

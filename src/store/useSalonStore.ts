@@ -28,6 +28,9 @@ export interface SalonState {
   addSalonEmployee: (employee: Employee) => Promise<Employee>;
   updateSalonEmployee: (employee: Employee) => Promise<Employee>;
   deleteSalonEmployee: (employee: Employee) => Promise<Employee>;
+  addSalonService: (service: Service) => Promise<Service>;
+  updateSalonService: (service: Service) => Promise<Service>;
+  deleteSalonService: (service: Service) => Promise<Service>;
 }
 
 export const useSalonStore = create<SalonState>((set, get) => ({
@@ -61,7 +64,7 @@ export const useSalonStore = create<SalonState>((set, get) => ({
       const selectedSalon = get().selectedSalon;
       const services = await get().getSalonServices();
       const customers = await get().getSalonCustomers();
-    
+
       set({
         selectedSalon: selectedSalon,
         salonServices: services,
@@ -74,16 +77,7 @@ export const useSalonStore = create<SalonState>((set, get) => ({
     }
   },
 
-
-  getSalonServices: async (): Promise<Service[]> => {
-    const selectedSalon = get().selectedSalon;
-    const response = await salonAPI.getSalonServices({
-      salon_id: selectedSalon?.id,
-    });
-   
-    return response.data.data;
-  },
-
+  // Customers
   getSalonCustomers: async (): Promise<Customer[]> => {
     const selectedSalon = get().selectedSalon;
     const response = await salonAPI.getSalonCustomers({
@@ -119,6 +113,7 @@ export const useSalonStore = create<SalonState>((set, get) => ({
     return response.data.data;
   },
 
+  // Employees
   getSalonEmployees: async (): Promise<Employee[]> => {
     const selectedSalon = get().selectedSalon;
     const response = await salonAPI.getSalonEmployees({
@@ -129,7 +124,7 @@ export const useSalonStore = create<SalonState>((set, get) => ({
   },
 
   addSalonEmployee: async (employee: Employee) => {
-    const selectedSalon = get().selectedSalon;  
+    const selectedSalon = get().selectedSalon;
     const response = await salonAPI.createSalonEmployee({
       ...employee,
       salon: selectedSalon?.id,
@@ -154,4 +149,37 @@ export const useSalonStore = create<SalonState>((set, get) => ({
     return response.data.data;
   },
 
+  // Services
+  getSalonServices: async (): Promise<Service[]> => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.getSalonServices({
+      salon_id: selectedSalon?.id,
+    });
+    set({ salonServices: response.data.data });
+    return response.data.data;
+  },
+
+  addSalonService: async (service: Service) => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.createSalonService({
+      ...service,
+      salon: selectedSalon?.id,
+    });
+    set({ salonServices: [...get().salonServices, response.data.data] });
+    return response.data.data;
+  },
+
+  updateSalonService: async (service: Service): Promise<Service> => {
+    const response = await salonAPI.updateSalonService({
+      ...service,
+    });
+    set({ salonServices: get().salonServices.map(s => s.id === service.id ? response.data.data : s) });
+    return response.data.data;
+  },
+
+  deleteSalonService: async (service: Service) => {
+    const response = await salonAPI.deleteSalonService(service);
+    set({ salonServices: get().salonServices.filter(s => s.id !== service.id) });
+    return response.data.data;
+  },
 }));

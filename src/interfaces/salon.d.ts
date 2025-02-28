@@ -44,6 +44,7 @@ export interface Service {
   deduction_cost?: number;
   category?: string;
   video_url?: string;
+  salon?: number;
 
 }
 

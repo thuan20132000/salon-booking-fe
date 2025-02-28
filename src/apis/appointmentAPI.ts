@@ -7,9 +7,6 @@ import axiosInstance from './base';
 const getAppointments = async (): Promise<AppointmentType[]> => {
   try {
     const response = await axiosInstance.get('/appointments/');
-    console.log('====================================');
-    console.log('response.data:: ', response.data);
-    console.log('====================================');
     return response.data;
   } catch (error) {
     console.error('Error fetching appointments:', error);
