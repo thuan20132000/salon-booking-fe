@@ -5,18 +5,20 @@ import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { Customer } from '@/interfaces/salon';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
 import AddCustomerModal from '@/components/Modals/AddCustomerModal';
-
+import UpdateCustomerModal from '@/components/Modals/UpdateCustomerModal';
 const TableSalonCustomer: React.FC = () => {
   const {
     salonCustomers,
-    addSalonCustomer,
     getSalonCustomers,
+    deleteSalonCustomer,
   } = useSalonStore((state: SalonState) => state);
 
   // const [customers, setCustomers] = useState<Customer[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
 
   const columns: ColumnsType<Customer> = [
     {
@@ -65,48 +67,20 @@ const TableSalonCustomer: React.FC = () => {
   };
 
   const handleEdit = (customer: Customer) => {
-    setEditingCustomer(customer);
-    form.setFieldsValue(customer);
-    setIsModalVisible(true);
+    setSelectedCustomer(customer);
+    setIsUpdateModalVisible(true);
   };
 
-    const handleDelete = (customer: Customer) => {
+  const handleDelete = (customer: Customer) => {
     Modal.confirm({
       title: 'Are you sure you want to delete this customer?',
       content: `This will permanently delete ${customer.full_name}'s record.`,
       onOk: () => {
-        // setCustomers(customers.filter(c => c.id !== customer.id));
+        deleteSalonCustomer(customer);
         message.success('Customer deleted successfully');
       },
+      okType: 'danger',
     });
-  };
-
-  const handleModalOk = () => {
-    form.validateFields()
-      .then(values => {
-        if (editingCustomer) {
-          // Update existing customer
-          // setCustomers(customers.map(c =>
-          //   c.id === editingCustomer.id ? { ...c, ...values } : c
-          // ));
-          message.success('Customer updated successfully');
-        } else {
-          // Add new customer
-          // const newCustomer = {
-          //   ...values,
-          //   id: Date.now().toString(),
-          //   total_visits: 0,
-          //   last_visit: new Date().toISOString().split('T')[0],
-          // };
-          // setCustomers([...customers, newCustomer]);
-          message.success('Customer added successfully');
-        }
-        setIsModalVisible(false);
-        form.resetFields();
-      })
-      .catch(info => {
-        console.log('Validate Failed:', info);
-      });
   };
 
   useEffect(() => {
@@ -136,7 +110,11 @@ const TableSalonCustomer: React.FC = () => {
       <AddCustomerModal
         isOpen={isModalVisible}
         onClose={() => setIsModalVisible(false)}
-        onSubmit={handleModalOk}
+      />
+      <UpdateCustomerModal
+        isVisible={isUpdateModalVisible}
+        onClose={() => setIsUpdateModalVisible(false)}
+        customer={selectedCustomer}
       />
     </div>
   );

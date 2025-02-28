@@ -22,6 +22,8 @@ export interface SalonState {
   getSalonServices: () => Promise<Service[]>;
   getSalonCustomers: () => Promise<Customer[]>;
   addSalonCustomer: (customer: Customer) => Promise<Customer>;
+  updateSalonCustomer: (customer: Customer) => Promise<Customer>;
+  deleteSalonCustomer: (customer: Customer) => Promise<Customer>;
 }
 
 export const useSalonStore = create<SalonState>((set, get) => ({
@@ -106,4 +108,21 @@ export const useSalonStore = create<SalonState>((set, get) => ({
     set({ salonCustomers: [...get().salonCustomers, response.data.data] });
     return response.data.data;
   },
+
+  updateSalonCustomer: async (customer: Customer): Promise<Customer> => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.updateSalonCustomer({
+      ...customer,
+      salon: selectedSalon?.id,
+    });
+    set({ salonCustomers: get().salonCustomers.map(c => c.id === customer.id ? response.data.data : c) });
+    return response.data.data;
+  },
+
+  deleteSalonCustomer: async (customer: Customer) => {
+    const response = await salonAPI.deleteSalonCustomer(customer);
+    set({ salonCustomers: get().salonCustomers.filter(c => c.id !== customer.id) });
+    return response.data.data;
+  },
+
 }));

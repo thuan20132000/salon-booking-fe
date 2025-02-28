@@ -1061,9 +1061,9 @@ dayjs@^1.11.11, dayjs@^1.11.13, dayjs@^1.11.7:
   resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.11.13.tgz"
   integrity sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==
 
-"daypilot-pro-react@https://npm.daypilot.org/daypilot-pro-react/trial/2025.1.6393.tar.gz":
-  version "2025.1.6393"
-  resolved "https://npm.daypilot.org/daypilot-pro-react/trial/2025.1.6393.tar.gz#da846777b7fa27956bd81666ff15367f335fca6b"
+"daypilot-pro-react@https://npm.daypilot.org/daypilot-pro-react/trial/2025.1.6412.tar.gz":
+  version "2025.1.6412"
+  resolved "https://npm.daypilot.org/daypilot-pro-react/trial/2025.1.6412.tar.gz#0687c47c09c805651cd401fbea0c38eb253e25f6"
   dependencies:
     create-react-class ">=15.0.0"
 
@@ -3220,6 +3220,7 @@ string-convert@^0.2.0:
   integrity sha512-u/1tdPl4yQnPBjnVrmdLo9gtuLvELKsAoRapekWggdiQNvvvum+jYF329d84NAa660KQw7pB2n36KrIKVoXa3A==
 
 "string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
+  name string-width-cjs
   version "4.2.3"
   resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==

@@ -1,20 +1,19 @@
 import { FC } from 'react';
-import { Modal, Form, Input, DatePicker, Select, Button } from 'antd';
+import { Modal, Form, Input, DatePicker, Select, Button, message } from 'antd';
 import { Customer } from '@/interfaces/salon';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
 interface AddCustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (customer: Partial<Customer>) => void;
 }
 
-const AddCustomerModal: FC<AddCustomerModalProps> = ({ isOpen, onClose, onSubmit }) => {
+const AddCustomerModal: FC<AddCustomerModalProps> = ({ isOpen, onClose }) => {
   const [form] = Form.useForm();
   const {
     addSalonCustomer,
   } = useSalonStore((state: SalonState) => state);
   const handleSubmit = async () => {
-    
+
     try {
       const values = await form.validateFields();
       const customer: Customer = {
@@ -25,10 +24,11 @@ const AddCustomerModal: FC<AddCustomerModalProps> = ({ isOpen, onClose, onSubmit
       };
 
       const newCustomer = await addSalonCustomer(customer);
-      onSubmit(newCustomer);
       form.resetFields();
+      message.success('Customer added successfully');
       onClose();
     } catch (error) {
+      message.error('Validation failed');
       console.error('Validation failed:', error);
     }
   };

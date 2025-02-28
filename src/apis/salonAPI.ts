@@ -26,4 +26,8 @@ export const salonAPI = {
     }
   }),
   createSalonCustomer: (customer: Customer) => axiosInstance.post<ApiResponse<Customer>>(`/salon-customers/`,customer),
+
+  updateSalonCustomer: (customer: Customer) => axiosInstance.put<ApiResponse<Customer>>(`/salon-customers/${customer.id}/`,customer),
+
+  deleteSalonCustomer: (customer: Customer) => axiosInstance.delete<ApiResponse<Customer>>(`/salon-customers/${customer.id}/`),
 };
