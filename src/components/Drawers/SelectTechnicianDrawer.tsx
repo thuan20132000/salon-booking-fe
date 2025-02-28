@@ -15,14 +15,14 @@ const SelectTechnicianDrawer: React.FC<SelectTechnicianDrawerProps> = ({
   onClose,
   onSelect,
 }) => {
-  const { salonTechnicians } = useSalonStore((state: SalonState) => state);
+  const { salonEmployees } = useSalonStore((state: SalonState) => state);
   const [searchText, setSearchText] = useState('');
-  const [technicians, setTechnicians] = useState<Employee[]>(salonTechnicians);
+  const [technicians, setTechnicians] = useState<Employee[]>(salonEmployees);
 
   const handleSearch = (value: string) => {
     setSearchText(value);
-    const filtered = salonTechnicians.filter((tech) =>
-      tech.nick_name?.toLowerCase().includes(value.toLowerCase())
+    const filtered = salonEmployees.filter((employee) =>
+      employee.nick_name?.toLowerCase().includes(value.toLowerCase())
     );
     setTechnicians(filtered);
   };
@@ -45,19 +45,19 @@ const SelectTechnicianDrawer: React.FC<SelectTechnicianDrawerProps> = ({
       <List
         itemLayout="horizontal"
         dataSource={technicians}
-        renderItem={(technician) => (
+        renderItem={(employee) => (
           <List.Item
-            onClick={() => onSelect(technician)}
+            onClick={() => onSelect(employee)}
             style={{ cursor: 'pointer' }}
             className="hover:bg-gray-100"
           >
             <List.Item.Meta
               avatar={
-                <Avatar src={technician.avatar}>
-                  {technician.nick_name?.charAt(0)}
+                <Avatar src={employee.avatar}>
+                  {employee.nick_name?.charAt(0)}
                 </Avatar>
               }
-              title={technician.nick_name}
+              title={employee.nick_name}
             />
           </List.Item>
         )}

@@ -10,6 +10,7 @@ export interface SalonState {
   salonTechnicians: Employee[];
   salonServices: Service[];
   salonCustomers: Customer[];
+  salonEmployees: Employee[];
 
   // Actions
   setSelectedSalon: (salon: Salon | null) => void;
@@ -18,12 +19,15 @@ export interface SalonState {
   setSalonTechnicians: (technicians: Employee[]) => void;
   setSalonServices: (services: Service[]) => void;
   initSalonData: () => void;
-  getSalonTechnicians: () => Promise<Employee[]>;
   getSalonServices: () => Promise<Service[]>;
   getSalonCustomers: () => Promise<Customer[]>;
   addSalonCustomer: (customer: Customer) => Promise<Customer>;
   updateSalonCustomer: (customer: Customer) => Promise<Customer>;
   deleteSalonCustomer: (customer: Customer) => Promise<Customer>;
+  getSalonEmployees: () => Promise<Employee[]>;
+  addSalonEmployee: (employee: Employee) => Promise<Employee>;
+  updateSalonEmployee: (employee: Employee) => Promise<Employee>;
+  deleteSalonEmployee: (employee: Employee) => Promise<Employee>;
 }
 
 export const useSalonStore = create<SalonState>((set, get) => ({
@@ -45,7 +49,7 @@ export const useSalonStore = create<SalonState>((set, get) => ({
   salonTechnicians: [],
   salonServices: [],
   salonCustomers: [],
-
+  salonEmployees: [],
   // Actions
   setSelectedSalon: (salon) => set({ selectedSalon: salon }),
   setIsLoading: (loading) => set({ isLoading: loading }),
@@ -54,14 +58,12 @@ export const useSalonStore = create<SalonState>((set, get) => ({
   setSalonServices: (services) => set({ salonServices: services }),
   initSalonData: async () => {
     try {
-      const technicians = await get().getSalonTechnicians();
       const selectedSalon = get().selectedSalon;
       const services = await get().getSalonServices();
       const customers = await get().getSalonCustomers();
     
       set({
         selectedSalon: selectedSalon,
-        salonTechnicians: technicians,
         salonServices: services,
         salonCustomers: customers,
         isLoading: false,
@@ -72,14 +74,6 @@ export const useSalonStore = create<SalonState>((set, get) => ({
     }
   },
 
-  getSalonTechnicians: async (): Promise<Employee[]> => {
-    // get selected salon id
-    const selectedSalon = get().selectedSalon;
-    const response = await salonAPI.getSalonEmployees({
-      salon_id: selectedSalon?.id,
-    });
-    return response.data.data;
-  },
 
   getSalonServices: async (): Promise<Service[]> => {
     const selectedSalon = get().selectedSalon;
@@ -122,6 +116,41 @@ export const useSalonStore = create<SalonState>((set, get) => ({
   deleteSalonCustomer: async (customer: Customer) => {
     const response = await salonAPI.deleteSalonCustomer(customer);
     set({ salonCustomers: get().salonCustomers.filter(c => c.id !== customer.id) });
+    return response.data.data;
+  },
+
+  getSalonEmployees: async (): Promise<Employee[]> => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.getSalonEmployees({
+      salon_id: selectedSalon?.id,
+    });
+    set({ salonEmployees: response.data.data });
+    return response.data.data;
+  },
+
+  addSalonEmployee: async (employee: Employee) => {
+    const selectedSalon = get().selectedSalon;  
+    const response = await salonAPI.createSalonEmployee({
+      ...employee,
+      salon: selectedSalon?.id,
+    });
+    set({ salonEmployees: [...get().salonEmployees, response.data.data] });
+    return response.data.data;
+  },
+
+  updateSalonEmployee: async (employee: Employee): Promise<Employee> => {
+    const selectedSalon = get().selectedSalon;
+    const response = await salonAPI.updateSalonEmployee({
+      ...employee,
+      salon: selectedSalon?.id,
+    });
+    set({ salonEmployees: get().salonEmployees.map(e => e.id === employee.id ? response.data.data : e) });
+    return response.data.data;
+  },
+
+  deleteSalonEmployee: async (employee: Employee) => {
+    const response = await salonAPI.deleteSalonEmployee(employee);
+    set({ salonEmployees: get().salonEmployees.filter(e => e.id !== employee.id) });
     return response.data.data;
   },
 

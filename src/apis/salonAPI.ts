@@ -10,11 +10,7 @@ import { ApiResponse } from "@/interfaces/api";
 
 export const salonAPI = {
   getSalons: () => axiosInstance.get<ApiResponse<Salon[]>>('/salons/'),
-  getSalonEmployees: (params: SalonParams) => axiosInstance.get<ApiResponse<Employee[]>>(`/employees/`,{
-    params: {
-      salon_id: params.salon_id,
-    }
-  }),
+
   getSalonServices: (params: SalonParams) => axiosInstance.get<ApiResponse<Service[]>>(`/services/`, {
     params: {
       salon_id: params.salon_id,
@@ -30,4 +26,18 @@ export const salonAPI = {
   updateSalonCustomer: (customer: Customer) => axiosInstance.put<ApiResponse<Customer>>(`/salon-customers/${customer.id}/`,customer),
 
   deleteSalonCustomer: (customer: Customer) => axiosInstance.delete<ApiResponse<Customer>>(`/salon-customers/${customer.id}/`),
+
+  // salon employees
+  getSalonEmployees: (params: SalonParams) => axiosInstance.get<ApiResponse<Employee[]>>(`/salon-employees/`,{
+    params: {
+      salon_id: params.salon_id,
+    }
+  }),
+
+  createSalonEmployee: (employee: Employee) => axiosInstance.post<ApiResponse<Employee>>(`/salon-employees/`,employee),
+
+  updateSalonEmployee: (employee: Employee) => axiosInstance.put<ApiResponse<Employee>>(`/salon-employees/${employee.id}/`,employee),
+
+  deleteSalonEmployee: (employee: Employee) => axiosInstance.delete<ApiResponse<Employee>>(`/salon-employees/${employee.id}/`),
+  
 };

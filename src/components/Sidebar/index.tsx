@@ -198,6 +198,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     pageName={pageName}
                     setPageName={setPageName}
                   />
+                   <SidebarItem
+                    item={{
+                      icon: <TeamOutlined />,
+                      label: "Employees",
+                      route: "/employees",
+                    }}
+                    pageName={pageName}
+                    setPageName={setPageName}
+                  />
                 </ul>
               </div>
           </nav>

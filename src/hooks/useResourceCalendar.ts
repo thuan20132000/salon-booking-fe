@@ -44,7 +44,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
     getCalendarBookings,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
 
-  const { salonTechnicians, salonServices, selectedSalon } = useSalonStore((state: SalonState) => state);
+  const { salonEmployees, salonServices, selectedSalon } = useSalonStore((state: SalonState) => state);
 
   const [view, setView] = useState("Day");
   const [startDate, setStartDate] = useState(DayPilot.Date.today());
@@ -77,7 +77,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
     const booking: Booking = e.data.metadata?.booking;
     const bookingService: BookingService = e.data.metadata?.booking_service;
 
-    const newTechnician = salonTechnicians.find((technician) => technician.id === newResource);
+    const newTechnician = salonEmployees.find((employee) => employee.id === newResource);
 
     const newBookingService: BookingService = {
       ...bookingService,
@@ -199,17 +199,17 @@ export const useResourceCalendar = (): UseResourceCalendar => {
 
   // transform technician columns to DayPilot.CalendarColumnData
   const getTechnicianColumns = useCallback(() => {
-    const transformedColumns: DayPilot.CalendarColumnData[] = salonTechnicians.map((technician) => ({
-      name: technician.nick_name || technician.name,
-      id: technician.id,
-      image: technician.avatar,
-      tooltip: technician.nick_name || technician.name,
-      data: technician,
+    const transformedColumns: DayPilot.CalendarColumnData[] = salonEmployees.map((employee) => ({
+      name: employee.nick_name || employee.name,
+      id: employee.id,
+      image: employee.avatar,
+      tooltip: employee.nick_name || employee.name,
+      data: employee,
       expandable: true,
     }));
 
     return transformedColumns;
-  }, [salonTechnicians, salonServices]);
+  }, [salonEmployees, salonServices]);
 
   useEffect(() => {
     if (startDate) {

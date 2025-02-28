@@ -17,6 +17,7 @@ export interface Employee {
   name: string;
   avatar?: string;
   nick_name?: string;
+  salon?: number;
 }
 
 export interface Customer {

@@ -39,7 +39,7 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
     setBooking,
   } = useBookingServiceStore((state: BookingServiceStore) => state);
 
-  const { salonTechnicians } = useSalonStore((state: SalonState) => state);
+  const { salonEmployees } = useSalonStore((state: SalonState) => state);
 
   const [form] = Form.useForm();
   const [isShowSelectBookingService, setIsShowSelectBookingService] = useState<boolean>(false);
@@ -49,7 +49,7 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
 
   const handleSelectBookingService = (service: Service) => {
 
-    let technician = salonTechnicians.find((technician) => technician.id === eventData?.resource);
+    let technician = salonEmployees.find((employee) => employee.id === eventData?.resource);
 
     addBookingService({
       id: generateTimestampNumber(),
@@ -93,7 +93,7 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
   const handleUpdateBookingService = (bookingService: BookingService) => {
 
     if (!bookingService.employee) {
-      let technician = salonTechnicians.find((technician) => technician.id === bookingService.employee?.id);
+      let technician = salonEmployees.find((employee) => employee.id === bookingService.employee?.id);
       bookingService.employee = technician || null;
     }
 
@@ -210,7 +210,7 @@ const CreateBookingEventModal: React.FC<CreateBookingEventModalProps> = ({
         >
           Add Service
         </Button>
-     
+          
         <SelectBookingServiceDrawer
           open={isShowSelectBookingService}
           onClose={handleCancelSelectBookingService}
