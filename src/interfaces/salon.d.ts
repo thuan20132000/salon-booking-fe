@@ -28,6 +28,8 @@ export interface Customer {
   birth_date?: string;
   gender?: string;
   salon?: number;
+  last_visit?: string;
+  total_visits?: number;
 }
 
 export interface Service {
