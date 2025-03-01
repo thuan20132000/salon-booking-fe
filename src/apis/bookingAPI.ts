@@ -23,4 +23,5 @@ export const bookingAPI = {
     axiosInstance.put<ApiResponse<Booking>>(`/bookings/${booking.id}/`, booking),
   deleteBooking: (id: number) => axiosInstance.delete<ApiResponse<Booking>>(`/bookings/${id}/`),
   getBooking: (id: number) => axiosInstance.get<ApiResponse<Booking>>(`/bookings/${id}/`),
+  updateBookingMetadata: (booking: Partial<Booking>) => axiosInstance.patch<ApiResponse<Booking>>(`/bookings/${booking.id}/update-booking-metadata/`, booking),
 };

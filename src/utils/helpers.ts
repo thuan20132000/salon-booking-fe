@@ -65,3 +65,18 @@ export const getBookingStatusColor = (status: Booking['status']) => {
       return '#91caff';
   }
 }
+
+export const getBookingStatusLabel = (status: Booking['status']): string => {
+  switch (status) {
+    case 'scheduled':
+      return 'Scheduled';
+    case 'checked_in':
+      return 'Checked In';
+    case 'in_service':
+      return 'In Service';
+    case 'checked_out':
+      return 'Checked Out';
+    default:
+      return 'Scheduled';
+  }
+};

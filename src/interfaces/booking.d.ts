@@ -35,6 +35,7 @@ export interface Booking {
 }
 
 export interface CreateBookingServiceType {
+  id?: number;
   service_id?: number;
   employee_id?: number;
   start_at?: string;
@@ -48,7 +49,7 @@ export interface CreateBookingServiceType {
 
 
 export interface CreateBookingType {
-  customer?: number;
+  customer_id?: number;
   services?: CreateBookingServiceType[];
   notes?: string;
   status?: string;
@@ -68,7 +69,7 @@ export interface UpdateBookingServiceType {
 
 export interface UpdateBookingType {
   id: number;
-  customer: number;
+  customer_id: number;
   services: CreateBookingServiceType[];
   notes: string;
   status: string;

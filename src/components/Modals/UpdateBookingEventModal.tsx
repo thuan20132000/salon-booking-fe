@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, DatePicker, Button, Space, Avatar } from 'antd';
+import { Modal, Form, Input, DatePicker, Button, Space, Avatar, Dropdown, Tag } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { generateTimestampNumber } from '@/utils/helpers';
+import { generateTimestampNumber, getBookingStatusLabel, getBookingStatusColor } from '@/utils/helpers';
 import BookingServiceCard from '@/components/Cards/BookingServiceCard';
 import { DayPilot } from 'daypilot-pro-react';
 import { PlusOutlined } from '@ant-design/icons';
@@ -14,6 +14,7 @@ import SelectSalonCustomerDrawer from '@/components/Drawers/SelectSalonCustomerD
 import CustomerCard from '@/components/Cards/CustomerCard';
 import { SelectCustomerCard } from '@/components/Cards/SelectCustomerCard';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
+import DropdownBookingActions from '@/components/Dropdowns/DropdownBookingActions';
 
 interface UpdateBookingEventModalProps {
   open: boolean;
@@ -48,7 +49,7 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
     let technician = salonTechnicians.find((technician) => technician.id === eventData?.resource);
 
     let newBookingService: BookingService = {
-      id: generateTimestampNumber(),
+      id: service.id || generateTimestampNumber(),
       service: service,
       employee: technician || null,
       price: service.price,
@@ -201,6 +202,17 @@ const UpdateBookingEventModal: React.FC<UpdateBookingEventModalProps> = ({
           description: '',
         }}
       >
+        <Space direction='horizontal' className='w-full justify-between mb-2'>
+          <Tag color={getBookingStatusColor(selectedUpdateBooking?.status)}>
+            {getBookingStatusLabel(selectedUpdateBooking?.status)}
+          </Tag>
+          <DropdownBookingActions
+            booking={selectedUpdateBooking}
+            onEdit={() => {}}
+            onDelete={() => {}}
+            onCancel={onCloseModal}
+          />
+        </Space>
         <Space direction='vertical' className='w-full flex justify-end mb-2'>
           {
             selectedUpdateBooking?.customer ?

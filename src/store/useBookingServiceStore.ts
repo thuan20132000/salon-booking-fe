@@ -37,6 +37,7 @@ export interface BookingServiceStore {
   // updateSalonBooking: (booking: UpdateBookingType) => void;
   // deleteSalonBooking: (id: number) => void;
   // getSalonBooking: (id: number) => void;
+  updateBookingMetadata: (booking: Partial<Booking>) => void;
 }
 
 export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
@@ -148,7 +149,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
 
       // create booking in db
       let createBooking: CreateBookingType = {
-        customer: booking.customer?.id,
+        customer_id: booking.customer?.id,
         services: booking?.booking_services?.map((bookingService) => ({
           service_id: bookingService.service?.id,
           employee_id: bookingService.employee?.id,
@@ -190,7 +191,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
        // update booking in db
        const updateBooking = {
         id: booking.id,
-        customer: booking.customer?.id,
+        customer_id: booking.customer?.id,
         services: booking?.booking_services?.map((bookingService) => ({
           service_id: bookingService.service?.id,
           employee_id: bookingService.employee?.id,
@@ -204,6 +205,7 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
         })),
         notes: booking?.notes || '',
         status: booking?.status || '',
+        selected_date: dayjs(booking?.selected_date).format('YYYY-MM-DD'),
       } as UpdateBookingType;
 
       const response = await bookingAPI.updateBooking(updateBooking);
@@ -244,6 +246,21 @@ export const useBookingServiceStore = create<BookingServiceStore>((set) => ({
     } catch (error) {
       console.error('Error creating booking:', error);
     }
-  }
+  },
 
+  updateBookingMetadata: async (booking: Partial<Booking>) => {
+    try {
+      const response = await bookingAPI.updateBookingMetadata(booking);
+      set((state) => ({
+        salonBookings: state.salonBookings.map((salonBooking) => {
+          if (salonBooking.id === booking.id) {
+            return response.data.data;
+          }
+          return salonBooking;
+        })
+      }))
+    } catch (error) {
+      console.error('Error updating booking metadata:', error);
+    }
+  }
 }));
