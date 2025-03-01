@@ -5,7 +5,7 @@ import { useBookingServiceStore, BookingServiceStore } from '@/store/useBookingS
 import { Day } from "react-big-calendar";
 import { BookingService, Booking } from "@/interfaces/booking";
 import dayjs from "dayjs";
-
+import { getBookingStatusColor } from "@/utils/helpers";  
 interface UseResourceCalendar {
 
   // state
@@ -141,13 +141,14 @@ export const useResourceCalendar = (): UseResourceCalendar => {
         let start_at = new DayPilot.Date(bookingService?.start_at || '')
         let end_at = new DayPilot.Date(bookingService?.end_at || '')
 
+        const statusColor = getBookingStatusColor(booking?.status || 'scheduled')
 
         bookingEvents.push({
           id: bookingService.id,
           text: "",
           start: start_at,
           end: end_at,
-          backColor: "#ffd966", // Yellow background
+          backColor: statusColor, // Yellow background
           borderColor: "darker",
           resource: bookingService.employee?.id || '',
           metadata: {
@@ -175,7 +176,7 @@ export const useResourceCalendar = (): UseResourceCalendar => {
             {
               left: 0,
               top: 20,
-              html: `<div style='font-size: 12px;font-weight:bold;'>${booking?.customer?.full_name || ''}</div>`,
+              html: `<div style='font-size: 12px;font-weight:bold;'>${booking?.customer?.full_name || ''} - ${booking.status}</div>`,
               padding: 2,
               height: 20,
             },

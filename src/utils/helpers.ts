@@ -1,3 +1,4 @@
+import { Booking } from '@/interfaces/booking';
 import dayjs from 'dayjs';
 
 export const formatDateTime = (date: string) => {
@@ -48,4 +49,19 @@ export const isOnlyAlphabets = (value: string) => {
   return /^[a-zA-Z\s]+$/.test(value);
 }
 
-
+export const getBookingStatusColor = (status: Booking['status']) => {
+  switch (status) {
+    case 'scheduled':
+      return '#ffe58f';
+    case 'in_service':
+      return '#91caff';
+    case 'cancelled':
+      return '#ffd591';
+    case 'checked_in':
+      return '#eaff8f';
+    case 'checked_out':
+      return '#13c2c2';
+    default:
+      return '#91caff';
+  }
+}

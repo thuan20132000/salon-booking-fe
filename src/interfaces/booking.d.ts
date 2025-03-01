@@ -25,7 +25,7 @@ export interface Booking {
   customer?: Customer | null;
   total_price?: number;
   total_duration?: number;
-  status?: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'check_in' | 'check_out';
+  status?: 'scheduled' | 'cancelled' | 'checked_in' | 'checked_out' | 'in_service';
   notes?: string;
   payment_method?: string;
   payment_status?: string;
