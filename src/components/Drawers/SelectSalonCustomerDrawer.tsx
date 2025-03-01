@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Drawer, Input, List, Avatar } from 'antd';
+import { Drawer, Input, List, Avatar, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { Customer } from '@/interfaces/salon';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
-
-
+import AddCustomerModal from '@/components/Modals/AddCustomerModal';
+import { isOnlyNumbers, isOnlyAlphabets } from '@/utils/helpers';
 interface SelectSalonCustomerDrawerProps {
   open: boolean;
   onClose: () => void;
@@ -19,6 +19,8 @@ const SelectSalonCustomerDrawer: React.FC<SelectSalonCustomerDrawerProps> = ({
   const { salonCustomers } = useSalonStore((state: SalonState) => state);
   const [searchText, setSearchText] = useState('');
   const [filteredCustomers, setFilteredCustomers] = useState(salonCustomers);
+  const [isAddCustomerModalOpen, setIsAddCustomerModalOpen] = useState(false);
+  const [newCustomer, setNewCustomer] = useState<Customer>();
 
   const handleSearch = (value: string) => {
     setSearchText(value);
@@ -32,6 +34,25 @@ const SelectSalonCustomerDrawer: React.FC<SelectSalonCustomerDrawerProps> = ({
     setFilteredCustomers(filtered);
   };
 
+  const handleAddCustomer = () => {
+    // setIsAddCustomerModalOpen(true);
+    let isNumber = isOnlyNumbers(searchText);
+
+    if (isNumber) {
+      setNewCustomer({
+        full_name: '',
+        phone_number: searchText,
+      });
+    } else if (isOnlyAlphabets(searchText)) {
+      setNewCustomer({
+        full_name: searchText,
+        phone_number: '',
+      });
+    }
+    setIsAddCustomerModalOpen(true);
+
+
+  }
   return (
     <Drawer
       title="Select Customer"
@@ -41,7 +62,7 @@ const SelectSalonCustomerDrawer: React.FC<SelectSalonCustomerDrawerProps> = ({
       width={400}
     >
       <Input
-        placeholder="Search by name, phone, or email"
+        placeholder="Search by name or phone"
         prefix={<SearchOutlined />}
         value={searchText}
         onChange={(e) => handleSearch(e.target.value)}
@@ -65,9 +86,30 @@ const SelectSalonCustomerDrawer: React.FC<SelectSalonCustomerDrawerProps> = ({
                   <div>{customer.email}</div>
                 </>
               }
+
             />
           </List.Item>
         )}
+        footer={
+          <div className="flex justify-center">
+            {
+              filteredCustomers.length <= 0 && (
+                <Button
+                  type="default"
+                  onClick={() => handleAddCustomer()}
+                >
+                  Create new customer
+                </Button>
+              )
+            }
+          </div>
+        }
+
+      />
+      <AddCustomerModal
+        isOpen={isAddCustomerModalOpen}
+        onClose={() => setIsAddCustomerModalOpen(false)}
+        initialCustomer={newCustomer}
       />
     </Drawer>
   );

@@ -1,13 +1,14 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { Modal, Form, Input, DatePicker, Select, Button, message } from 'antd';
 import { Customer } from '@/interfaces/salon';
 import { useSalonStore, SalonState } from '@/store/useSalonStore';
 interface AddCustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialCustomer?: Customer;
 }
 
-const AddCustomerModal: FC<AddCustomerModalProps> = ({ isOpen, onClose }) => {
+const AddCustomerModal: FC<AddCustomerModalProps> = ({ isOpen, onClose, initialCustomer }) => {
   const [form] = Form.useForm();
   const {
     addSalonCustomer,
@@ -32,6 +33,12 @@ const AddCustomerModal: FC<AddCustomerModalProps> = ({ isOpen, onClose }) => {
       console.error('Validation failed:', error);
     }
   };
+
+  useEffect(() => {
+    if (initialCustomer) {
+      form.setFieldsValue(initialCustomer);
+    }
+  }, [initialCustomer]);
 
   return (
     <Modal

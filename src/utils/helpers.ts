@@ -36,3 +36,16 @@ export const generateUUID = () => {
 export const generateTimestampNumber = (): number => {
   return new Date().getTime();
 }
+
+
+// check if the string input is a numeric value
+export const isOnlyNumbers = (value: string) => {
+  return !isNaN(Number(value));
+}
+
+// check if the string input is only alphabets
+export const isOnlyAlphabets = (value: string) => {
+  return /^[a-zA-Z\s]+$/.test(value);
+}
+
+
